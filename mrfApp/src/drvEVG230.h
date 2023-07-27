@@ -76,7 +76,8 @@ typedef uint8_t  u8;
 
 // Asyn Parameters
 // mrf-vmeevg230.template
-#define EVG_Enabled             "EVG_Enabled"
+#define EVG_Enabled             "EVG_is_enabled"
+#define EVG_Enable              "EVG_Enable"
 #define EVG_Clock               "EVG_Clock"
 #define EVG_RF_Source           "EVG_RF_Source"
 #define EVG_RF_Prescaler        "EVG_RF_Prescaler"
@@ -145,14 +146,15 @@ public:
     virtual asynStatus readInt32(asynUser* asyn_user, epicsInt32* value);
     // virtual asynStatus writeInt32(asynUser* asyn_user, epicsInt32 value);
     // virtual asynStatus readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, epicsUInt32 mask);
-    // virtual asynStatus writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, epicsUInt32 mask);
+    virtual asynStatus writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, epicsUInt32 mask);
     
     int writeRegister(int register, uint16_t data);
     int readRegister(int register, uint16_t* data);
     int writeAndCheckRegister(int register, uint16_t data);
 
 protected:
-    int index_evg_enabled;
+    int index_evg_is_enabled;
+    int index_evg_enable;
     int index_evg_clock;
     int index_evg_rf_source;
     int index_evg_rf_prescaler;

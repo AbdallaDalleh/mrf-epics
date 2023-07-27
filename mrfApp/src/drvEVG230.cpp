@@ -16,7 +16,8 @@ EVG230::EVG230(const char* port_name, const char* name, int frequency)
         return;
     }
 
-    createParam(EVG_Firmware_Version, asynParamInt32, &index_evg_firmware);
+    createParam(EVG_Firmware_Version, asynParamInt32,         &index_evg_firmware);
+    createParam(EVG_Enable,           asynParamUInt32Digital, &index_evg_enable);
 
     this->frequency = frequency;
 }
@@ -39,6 +40,46 @@ asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
     }
     else
         *value = data;
+
+    return asynSuccess;
+}
+
+asynStatus EVG230::writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, epicsUInt32 mask)
+{
+    writeRegister(REGISTER_CONTROL, (value & mask) == 0x1 ? CONTROL_ENABLE: CONTROL_DISABLE);
+    return asynSuccess;
+}
+
+int EVG230::writeRegister(int reg, u16 data)
+{
+    message_t message;
+    char tx_buffer[PACKET_SIZE];
+    char rx_buffer[PACKET_SIZE];
+    int status;
+    size_t tx_bytes;
+    size_t rx_bytes;
+    int reason;
+
+    message.access    = ACCESS_WRITE;
+    message.status    = 0;
+    message.data      = htons(data);
+    message.address   = htonl(REGISTER_BASE_ADDRESS + reg);
+    message.reference = 0x00000000;
+
+    memcpy(tx_buffer, (void*) &message, sizeof(tx_buffer));
+    status = pasynOctetSyncIO->writeRead(this->asyn_user, tx_buffer, PACKET_SIZE, rx_buffer, PACKET_SIZE, 2, &tx_bytes, &rx_bytes, &reason);
+    if(status != asynSuccess || tx_bytes != PACKET_SIZE || rx_bytes != PACKET_SIZE) {
+        // TODO: Error reporting.
+        printf("Could not write to register: %d\n", reg);
+        return status;
+    }
+
+    memcpy(&message, rx_buffer, sizeof(message_t));
+    if(ntohs(message.status) != 0 /*|| ntohs(message.data) != data*/) {
+        // TODO: Error reporting.
+        printf("Device status error or data mismatch\n.");
+        return asynError;
+    }
 
     return asynSuccess;
 }
