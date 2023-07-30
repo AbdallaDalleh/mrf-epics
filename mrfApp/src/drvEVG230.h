@@ -145,7 +145,7 @@ public:
     // ~EVG230();
     virtual asynStatus readInt32(asynUser* asyn_user, epicsInt32* value);
     // virtual asynStatus writeInt32(asynUser* asyn_user, epicsInt32 value);
-    // virtual asynStatus readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, epicsUInt32 mask);
+    virtual asynStatus readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, epicsUInt32 mask);
     virtual asynStatus writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, epicsUInt32 mask);
     
     int writeRegister(int register, uint16_t data);

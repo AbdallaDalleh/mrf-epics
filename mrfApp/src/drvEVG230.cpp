@@ -18,6 +18,9 @@ EVG230::EVG230(const char* port_name, const char* name, int frequency)
 
     createParam(EVG_Firmware_Version, asynParamInt32,         &index_evg_firmware);
     createParam(EVG_Enable,           asynParamUInt32Digital, &index_evg_enable);
+    createParam(EVG_Enabled,          asynParamUInt32Digital, &index_evg_is_enabled);
+    createParam(EVG_Clock,            asynParamInt32,         &index_evg_clock);
+    createParam(EVG_RF_Source,        asynParamInt32,         &index_evg_rf_source);
 
     this->frequency = frequency;
 }
@@ -29,8 +32,14 @@ asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
     int reg;
     u16 data;
 
-    if(function == index_evg_firmware) {
+    if(function == index_evg_firmware)
         reg = REGISTER_FIRMWARE;
+    else if(function == index_evg_clock)
+        reg = REGISTER_USEC_DIVIDER;
+    else if(function == index_evg_rf_source)
+        reg = REGISTER_RF_CONTROL;
+    else {
+        return asynError;
     }
 
     status = readRegister(reg, &data);
@@ -38,16 +47,39 @@ asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
         // TODO: Error reporting.
         printf("readInt32 error: %d\n", reg);
     }
-    else
-        *value = data;
+    else {
+        if(function == index_evg_rf_source)
+            *value = (data & RF_SOURCE_EXTERNAL) != 0;
+        else
+            *value = data;
+    }
 
     return asynSuccess;
 }
 
 asynStatus EVG230::writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, epicsUInt32 mask)
 {
-    writeRegister(REGISTER_CONTROL, (value & mask) == 0x1 ? CONTROL_ENABLE: CONTROL_DISABLE);
-    return asynSuccess;
+    int status = asynSuccess;
+    int function = asyn_user->reason;
+
+    if(function == index_evg_enable)
+        status = writeRegister(REGISTER_CONTROL, (value & mask) == 0x1 ? CONTROL_ENABLE: CONTROL_DISABLE);
+
+    return (asynStatus) status;
+}
+
+asynStatus EVG230::readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, epicsUInt32 mask)
+{
+    u16 data;
+    int function = asyn_user->reason;
+    int status = asynSuccess;
+
+    if(function == index_evg_is_enabled) {
+        status = readRegister(REGISTER_CONTROL, &data);
+        if(status == asynSuccess)
+            *value = !((data & CONTROL_DISABLE_BIT) == 0x8000);
+    }
+    return (asynStatus) status;
 }
 
 int EVG230::writeRegister(int reg, u16 data)
