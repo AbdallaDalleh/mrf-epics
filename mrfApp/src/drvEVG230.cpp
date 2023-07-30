@@ -21,6 +21,9 @@ EVG230::EVG230(const char* port_name, const char* name, int frequency)
     createParam(EVG_Enabled,          asynParamUInt32Digital, &index_evg_is_enabled);
     createParam(EVG_Clock,            asynParamInt32,         &index_evg_clock);
     createParam(EVG_RF_Source,        asynParamInt32,         &index_evg_rf_source);
+    createParam(EVG_AC_Sync_Source,   asynParamInt32,         &index_evg_ac_sync_source);
+    createParam(EVG_RF_Prescaler,     asynParamInt32,         &index_evg_rf_prescaler);
+    createParam(EVG_AC_Prescaler,     asynParamInt32,         &index_evg_ac_prescaler);
 
     this->frequency = frequency;
 }
@@ -36,8 +39,10 @@ asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
         reg = REGISTER_FIRMWARE;
     else if(function == index_evg_clock)
         reg = REGISTER_USEC_DIVIDER;
-    else if(function == index_evg_rf_source)
+    else if(function == index_evg_rf_source || function == index_evg_rf_prescaler)
         reg = REGISTER_RF_CONTROL;
+    else if(function == index_evg_ac_sync_source || function == index_evg_ac_prescaler)
+        reg = REGISTER_AC_ENABLE;
     else {
         return asynError;
     }
@@ -49,12 +54,60 @@ asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
     }
     else {
         if(function == index_evg_rf_source)
-            *value = (data & RF_SOURCE_EXTERNAL) != 0;
+            *value = (data & RF_CONTROL_EXTERNAL) != 0;
+        else if(function == index_evg_ac_sync_source)
+            *value = (data & AC_ENABLE_SYNC) != 0;
+        else if(function == index_evg_rf_prescaler)
+            *value = (data & RF_CONTROL_DIVIDER_MASK) + 1;
+        else if(function == index_evg_ac_prescaler)
+            *value = (data & AC_ENABLE_DIVIDER_MASK) + 1;
         else
             *value = data;
     }
 
     return asynSuccess;
+}
+
+asynStatus EVG230::writeInt32(asynUser* pasynUser, epicsInt32 value)
+{
+    int status = asynSuccess;
+    int function = pasynUser->reason;
+    int reg;
+    u16 data;
+
+    if(function == index_evg_rf_source) {
+        reg    = REGISTER_RF_CONTROL;
+        status = readRegister(reg, &data);
+        data   = value == RF_SOURCE_INTERNAL ? data & (~RF_CONTROL_EXTERNAL) : (data | RF_CONTROL_EXTERNAL);
+    }
+    else if(function == index_evg_ac_sync_source) {
+        reg    = REGISTER_AC_ENABLE;
+        status = readRegister(reg, &data);
+        data   = value == AC_SOURCE_EVENT ? data & (~AC_ENABLE_SYNC) : (data | AC_ENABLE_SYNC);
+    }
+    else if(function == index_evg_rf_prescaler) {
+        reg    = REGISTER_RF_CONTROL;
+        status = readRegister(reg, &data);
+        data   = (data & ~RF_CONTROL_DIVIDER_MASK) | ((value - 1));
+    }
+    else if(function == index_evg_ac_prescaler) {
+        reg    = REGISTER_AC_ENABLE;
+        status = readRegister(reg, &data);
+        data   = (data & ~AC_ENABLE_DIVIDER_MASK) | ((value - 1));
+    }
+    else {
+        // TODO: Error reporting.
+        printf("writeInt32 unknown function error.\n");
+        return asynError;
+    }
+
+    if(status != asynSuccess) {
+        printf("writeInt32 IO error: %d | %d\n", reg, function);
+        return asynError;
+    }
+
+    status = writeRegister(reg, data);
+    return (asynStatus) status;
 }
 
 asynStatus EVG230::writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, epicsUInt32 mask)
@@ -136,7 +189,7 @@ int EVG230::readRegister(int reg, u16* data)
     status = pasynOctetSyncIO->writeRead(this->asyn_user, tx_buffer, PACKET_SIZE, rx_buffer, PACKET_SIZE, 2, &tx_bytes, &rx_bytes, &reason);
     if(status != asynSuccess || tx_bytes != PACKET_SIZE || rx_bytes != PACKET_SIZE) {
         // TODO: Error reporting.
-        printf("Could not write to register: %d\n", reg);
+        printf("Could not read register: %d\n", reg);
         return status;
     }
 
