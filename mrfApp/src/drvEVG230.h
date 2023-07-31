@@ -13,6 +13,8 @@ using std::endl;
 #include <iocsh.h>
 #include <asynOctetSyncIO.h>
 
+#include "EVG230Board.h"
+
 typedef uint32_t u32;
 typedef uint16_t u16;
 typedef uint8_t  u8;
@@ -57,8 +59,8 @@ typedef uint8_t  u8;
 #define EVENT_END_SEQUENCE      0x7f
 
 /*evg UDP packet field defitions*/
-#define ACCESS_READ     (1)
-#define ACCESS_WRITE    (2)
+// #define ACCESS_READ     (1)
+// #define ACCESS_WRITE    (2)
 
 /*Device name maximum length*/
 #define NAME_LENGTH            30
@@ -111,14 +113,14 @@ typedef uint8_t  u8;
         return asynError; \
     } \
 
-typedef struct
-{
-	uint8_t		access;		/*Read/Write*/
-	uint8_t		status;		/*Filled by device*/
-	uint16_t	data;		/*Register data*/
-	uint32_t	address;	/*Register address*/
-	uint32_t	reference;	/*Reserved*/
-} message_t;
+// typedef struct
+// {
+// 	uint8_t		access;		/*Read/Write*/
+// 	uint8_t		status;		/*Filled by device*/
+// 	uint16_t	data;		/*Register data*/
+// 	uint32_t	address;	/*Register address*/
+// 	uint32_t	reference;	/*Reserved*/
+// } message_t;
 
 typedef enum
 {
@@ -126,11 +128,11 @@ typedef enum
 	TRIGGER_AC
 } triggersource_t;
 
-typedef enum
-{
-	RF_SOURCE_INTERNAL,
-	RF_SOURCE_EXTERNAL
-} rfsource_t;
+// typedef enum
+// {
+// 	RF_SOURCE_INTERNAL,
+// 	RF_SOURCE_EXTERNAL
+// } rfsource_t;
 
 typedef enum
 {
@@ -177,6 +179,7 @@ protected:
 
 private:
     asynUser* asyn_user;
+    EVG230Board* board;
     int frequency;
 };
 
