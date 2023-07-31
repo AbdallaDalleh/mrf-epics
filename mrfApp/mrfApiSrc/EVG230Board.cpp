@@ -15,6 +15,32 @@ EVG230Board::EVG230Board(string asyn_name, int frequency)
     this->frequency = frequency;
 }
 
+int EVG230Board::enable()
+{
+    int status = readRegister(REGISTER_CONTROL, &raw_data);
+    if(status != 0)
+        return status;
+    
+    status = writeRegister(REGISTER_CONTROL, ~MSDIS & (FF | RSFIFO | DFIFO | RXVIO));
+    return status;    
+}
+
+int EVG230Board::disable()
+{
+    int status = readRegister(REGISTER_CONTROL, &raw_data);
+    if(status == 0)
+        status = writeRegister(REGISTER_CONTROL, MSDIS | FF | RSFIFO | DFIFO | RXVIO);
+    return status;    
+}
+
+int EVG230Board::isEnabled(u16* value)
+{
+    int status = readRegister(REGISTER_CONTROL, &raw_data);
+    if(status == 0)
+        *value = (raw_data & MSDIS) == 0;
+    return status;
+}
+
 int EVG230Board::readFirmware(u16* data)
 {
     return readRegister(REGISTER_FIRMWARE, data);

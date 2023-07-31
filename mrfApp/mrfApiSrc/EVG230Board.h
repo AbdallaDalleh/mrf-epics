@@ -24,6 +24,9 @@ public:
     int readClock(u16* data);
     int readRFSource(u16* source);
     int setRFSource(u16 source);
+    int enable();
+    int disable();
+    int isEnabled(u16* value);
 
     int readRegister(int reg, u16* data);
     int writeRegister(int reg, u16 data);

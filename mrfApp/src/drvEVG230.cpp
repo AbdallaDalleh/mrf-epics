@@ -9,12 +9,6 @@ EVG230::EVG230(const char* port_name, const char* name, int frequency)
                      1,
                      0, 0)
 {
-    // int status = pasynOctetSyncIO->connect(name, 1, &asyn_user, NULL);
-    // if(status != asynSuccess) {
-    //     // TODO: Error reporting.
-    //     printf("Could not connect to the device.\n");
-    //     return;
-    // }
     this->board = new EVG230Board(name, frequency);
     if(this->board->error != asynSuccess) {
         // TODO: Error reporting.
@@ -72,23 +66,20 @@ asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
     // }
 
     if(function == index_evg_firmware)
-        board->readFirmware(&data);
+        status = board->readFirmware(&data);
     else if(function == index_evg_clock)
-        board->readClock(&data);
+        status = board->readClock(&data);
     else if(function == index_evg_rf_source)
-        board->readRFSource(&data);
+        status = board->readRFSource(&data);
     else {
         cout << "readInt32: Unknown function" << endl;
         return asynError;
     }
 
-    if(board->error != 0) {
-        cout << board->errorMessage << endl;
-        return asynError;
-    }
+    if(status == 0)
+        *value = data;
 
-    *value = data;
-    return asynSuccess;
+    return (asynStatus) status;
 }
 
 asynStatus EVG230::writeInt32(asynUser* pasynUser, epicsInt32 value)
@@ -132,27 +123,22 @@ asynStatus EVG230::writeInt32(asynUser* pasynUser, epicsInt32 value)
     // status = writeRegister(reg, data);
 
     if(function == index_evg_rf_source)
-        board->setRFSource(value);
+        status = board->setRFSource(value);
     else {
         cout << "readInt32: Unknown function" << endl;
         return asynError;
     }
 
-    if(board->error != 0) {
-        cout << board->errorMessage << endl;
-        return asynError;
-    }
-
-    return asynSuccess;
+    return (asynStatus) status;
 }
 
 asynStatus EVG230::writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, epicsUInt32 mask)
 {
     int status = asynSuccess;
-    // int function = asyn_user->reason;
+    int function = asyn_user->reason;
 
-    // if(function == index_evg_enable)
-    //     status = writeRegister(REGISTER_CONTROL, (value & mask) == 0x1 ? CONTROL_ENABLE: CONTROL_DISABLE);
+    if(function == index_evg_enable)
+        status = (value & mask) == 0x0 ? board->disable() : board->enable();
 
     return (asynStatus) status;
 }
@@ -163,11 +149,17 @@ asynStatus EVG230::readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, ep
     int function = asyn_user->reason;
     int status = asynSuccess;
 
-    // if(function == index_evg_is_enabled) {
-    //     status = readRegister(REGISTER_CONTROL, &data);
-    //     if(status == asynSuccess)
-    //         *value = !((data & CONTROL_DISABLE_BIT) == 0x8000);
-    // }
+    if(function == index_evg_enable) {
+        status = board->isEnabled(&data);
+    }
+    else {
+        cout << "readUInt32Digital: Unknown function" << endl;
+        return asynError;
+    }
+
+    if(status == 0)
+        *value = data;
+
     return (asynStatus) status;
 }
 
