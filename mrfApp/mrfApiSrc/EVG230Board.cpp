@@ -64,11 +64,61 @@ int EVG230Board::setRFSource(u16 source)
     int status;
 
     status = readRegister(REGISTER_RF_CONTROL, &data);
-    if(status != 0)
-        return status;
+    if(status == 0) {
+        data   = source == RF_SOURCE_INTERNAL ? data & ~(TCSEL | ECSEL | BRSEL) : data | (TCSEL | ECSEL | BRSEL);
+        status = writeRegister(REGISTER_RF_CONTROL, data);
+    }
+    return status;
+}
 
-    data   = source == RF_SOURCE_INTERNAL ? data & ~(TCSEL | ECSEL | BRSEL) : data | (TCSEL | ECSEL | BRSEL);
-    status = writeRegister(REGISTER_RF_CONTROL, data);
+int EVG230Board::readACSyncSource(u16* source)
+{
+    int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
+    *source = (raw_data & ACSYNC) != 0;
+    return status;
+}
+
+int EVG230Board::setACSyncSource(u16 source)
+{
+    u16 data;
+    int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
+    if(status == 0) {
+        data = source == AC_SOURCE_EVENT ? data & ~ACSYNC : data | ACSYNC;
+        status = writeRegister(REGISTER_AC_ENABLE, data);
+    }
+
+    return status;
+}
+
+int EVG230Board::readRFPrescaler(u16* data)
+{
+    int status = readRegister(REGISTER_RF_CONTROL, data);
+    if(status == 0)
+        *data = (*data & RFSELX) + 1;
+    return status;
+}
+
+int EVG230Board::setRFPrescaler(u16 data)
+{
+    int status = readRegister(REGISTER_RF_CONTROL, &raw_data);
+    if(status == 0)
+        status = writeRegister(REGISTER_RF_CONTROL, (raw_data & ~RFSELX) | (data - 1));
+    return status;
+}
+
+int EVG230Board::readACPrescaler(u16* data)
+{
+    int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
+    if(status == 0)
+        *data = (raw_data & AC_DIV) + 1;
+    return status;
+}
+
+int EVG230Board::setACPrescaler(u16 data)
+{
+    int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
+    if(status == 0)
+        status = writeRegister(REGISTER_AC_ENABLE, (raw_data & ~AC_DIV) | (data - 1));
     return status;
 }
 

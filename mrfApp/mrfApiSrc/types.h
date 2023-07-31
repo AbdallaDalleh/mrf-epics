@@ -21,3 +21,6 @@ typedef struct
 
 #define RF_SOURCE_INTERNAL 0
 #define RF_SOURCE_EXTERNAL 1
+
+#define AC_SOURCE_EVENT    0
+#define AC_SOURCE_MXC7     1

@@ -58,10 +58,6 @@ typedef uint8_t  u8;
 
 #define EVENT_END_SEQUENCE      0x7f
 
-/*evg UDP packet field defitions*/
-// #define ACCESS_READ     (1)
-// #define ACCESS_WRITE    (2)
-
 /*Device name maximum length*/
 #define NAME_LENGTH            30
 /*evg register base address*/
@@ -113,32 +109,11 @@ typedef uint8_t  u8;
         return asynError; \
     } \
 
-// typedef struct
-// {
-// 	uint8_t		access;		/*Read/Write*/
-// 	uint8_t		status;		/*Filled by device*/
-// 	uint16_t	data;		/*Register data*/
-// 	uint32_t	address;	/*Register address*/
-// 	uint32_t	reference;	/*Reserved*/
-// } message_t;
-
 typedef enum
 {
 	TRIGGER_SOFT,
 	TRIGGER_AC
 } triggersource_t;
-
-// typedef enum
-// {
-// 	RF_SOURCE_INTERNAL,
-// 	RF_SOURCE_EXTERNAL
-// } rfsource_t;
-
-typedef enum
-{
-	AC_SOURCE_EVENT,
-	AC_SOURCE_MXC7
-} acsource_t;
 
 class EVG230 : public asynPortDriver
 {
@@ -149,10 +124,6 @@ public:
     virtual asynStatus writeInt32(asynUser* asyn_user, epicsInt32 value);
     virtual asynStatus readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, epicsUInt32 mask);
     virtual asynStatus writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, epicsUInt32 mask);
-    
-    int writeRegister(int register, uint16_t data);
-    int readRegister(int register, uint16_t* data);
-    int writeAndCheckRegister(int register, uint16_t data);
 
 protected:
     int index_evg_is_enabled;

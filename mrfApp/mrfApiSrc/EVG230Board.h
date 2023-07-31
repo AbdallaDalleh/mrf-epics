@@ -27,6 +27,12 @@ public:
     int enable();
     int disable();
     int isEnabled(u16* value);
+    int readACSyncSource(u16* source);
+    int setACSyncSource(u16 source);
+    int readRFPrescaler(u16* data);
+    int setRFPrescaler(u16 data);
+    int readACPrescaler(u16* data);
+    int setACPrescaler(u16 data);
 
     int readRegister(int reg, u16* data);
     int writeRegister(int reg, u16 data);
