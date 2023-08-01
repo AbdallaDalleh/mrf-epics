@@ -1,6 +1,7 @@
 .vscode/
 lib/
 dbd/
+include/
 O.Common/
 O.linux-x86/
 O.linux-x86_64/

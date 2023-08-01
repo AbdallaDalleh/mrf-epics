@@ -86,8 +86,8 @@ typedef uint8_t  u8;
 
 // mrf-vmeevg230-sequencer.template
 #define EVG_SEQ_Enabled        "EVG_SEQ_Enabled"
-#define EVG_SEQ_Trigger_Source "SEQ_Trigger_Source"
-#define EVG_SEQ_Prescaler      "SEQ_Prescaler"
+#define EVG_SEQ_Trigger_Source "EVG_SEQ_Trigger_Source"
+#define EVG_SEQ_Prescaler      "EVG_SEQ_Prescaler"
 #define EVG_SEQ_Trigger        "SEQ_Trigger"
 
 // mrf-vmeevg230-event.template
@@ -97,8 +97,7 @@ typedef uint8_t  u8;
 #define SEQ1_Event_Time     "SEQ1_Event_Time"
 
 // mrf-vmeevg230-counter.template
-#define Counter_Name        "Counter_Name"
-#define Counter_Prescaler   "Counter_Prescaler"
+#define EVG_MXC_Prescaler   "EVG_MXC_Prescaler"
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 

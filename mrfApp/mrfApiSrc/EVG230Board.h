@@ -33,6 +33,15 @@ public:
     int setRFPrescaler(u16 data);
     int readACPrescaler(u16* data);
     int setACPrescaler(u16 data);
+    int readMXCPrescaler(int counter, u32* data);
+    int setMXCPrescaler(int counter, u32 data);
+    int enableSequencer(int seq);
+    int disableSequencer(int seq);
+    int isSequencerEnabled(int seq, u16* data);
+    int readSequencerPrescaler(int seq, u16* data);
+    int setSequencerPrescaler(int seq, u16 data);
+    int readSequencerTriggerSource(int seq, u16* data);
+    int setSequencerTriggerSource(int seq, u16 data);
 
     int readRegister(int reg, u16* data);
     int writeRegister(int reg, u16 data);

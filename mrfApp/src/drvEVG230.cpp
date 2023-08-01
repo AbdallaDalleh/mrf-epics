@@ -24,6 +24,10 @@ EVG230::EVG230(const char* port_name, const char* name, int frequency)
     createParam(EVG_AC_Sync_Source,   asynParamInt32,         &index_evg_ac_sync_source);
     createParam(EVG_RF_Prescaler,     asynParamInt32,         &index_evg_rf_prescaler);
     createParam(EVG_AC_Prescaler,     asynParamInt32,         &index_evg_ac_prescaler);
+    createParam(EVG_MXC_Prescaler,    asynParamInt32,         &index_counter_prescaler);
+    createParam(EVG_SEQ_Enabled,      asynParamUInt32Digital, &index_evg_seq_enabled);
+    createParam(EVG_SEQ_Prescaler,    asynParamInt32,         &index_evg_seq_prescaler);
+    createParam(EVG_SEQ_Trigger_Source, asynParamUInt32Digital, &index_evg_seq_trigger_source);
 
     this->frequency = frequency;
 }
@@ -31,22 +35,30 @@ EVG230::EVG230(const char* port_name, const char* name, int frequency)
 asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
 {
     int function = pasynUser->reason;
+    int address;
     int status;
     int reg;
-    u16 data;
+    u32 data;
 
+    getAddress(pasynUser, &address);
     if(function == index_evg_firmware)
-        status = board->readFirmware(&data);
+        status = board->readFirmware((u16*) &data);
     else if(function == index_evg_clock)
-        status = board->readClock(&data);
+        status = board->readClock((u16*) &data);
     else if(function == index_evg_rf_source)
-        status = board->readRFSource(&data);
+        status = board->readRFSource((u16*) &data);
     else if(function == index_evg_ac_sync_source)
-        status = board->readACSyncSource(&data);
+        status = board->readACSyncSource((u16*) &data);
     else if(function == index_evg_rf_prescaler)
-        status = board->readRFPrescaler(&data);
+        status = board->readRFPrescaler((u16*) &data);
     else if(function == index_evg_ac_prescaler)
-        status = board->readACPrescaler(&data);
+        status = board->readACPrescaler((u16*) &data);
+    else if(function == index_counter_prescaler)
+        status = board->readMXCPrescaler(address, &data);
+    else if(function == index_evg_seq_prescaler)
+        status = board->readSequencerPrescaler(address, (u16*) &data);
+    else if(function == index_evg_seq_trigger_source)
+        status = board->readSequencerTriggerSource(address, (u16*) &data);
     else {
         cout << "readInt32: Unknown function" << endl;
         return asynError;
@@ -60,11 +72,12 @@ asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
 
 asynStatus EVG230::writeInt32(asynUser* pasynUser, epicsInt32 value)
 {
+    int address;
     int status = asynSuccess;
     int function = pasynUser->reason;
     int reg;
-    u16 data;
 
+    getAddress(pasynUser, &address);
     if(function == index_evg_rf_source)
         status = board->setRFSource(value);
     else if(function == index_evg_ac_sync_source)
@@ -73,6 +86,15 @@ asynStatus EVG230::writeInt32(asynUser* pasynUser, epicsInt32 value)
         status = board->setRFPrescaler(value);
     else if(function == index_evg_ac_prescaler)
         status = board->setACPrescaler(value);
+    else if(function == index_counter_prescaler)
+        status = board->setMXCPrescaler(address, value);
+    else if(function == index_evg_seq_prescaler)
+        status = board->setSequencerPrescaler(address, value);
+    else if(function == index_evg_seq_trigger_source)
+    {
+        cout << "V: " << value << endl;
+        status = board->setSequencerTriggerSource(address, value);
+    }
     else {
         cout << "readInt32: Unknown function" << endl;
         return asynError;
@@ -85,9 +107,13 @@ asynStatus EVG230::writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, ep
 {
     int status = asynSuccess;
     int function = asyn_user->reason;
+    int address;
 
+    getAddress(asyn_user, &address);
     if(function == index_evg_enable)
         status = (value & mask) == 0x0 ? board->disable() : board->enable();
+    else if(function == index_evg_seq_enabled)
+        status = (value & mask) ? board->enableSequencer(address) : board->disableSequencer(address);
     else {
         cout << "writeUInt32Digital: Unknown function" << endl;
         return asynError;
@@ -101,10 +127,14 @@ asynStatus EVG230::readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, ep
     u16 data;
     int function = asyn_user->reason;
     int status = asynSuccess;
+    int address;
 
+    getAddress(asyn_user, &address);
     if(function == index_evg_enable) {
         status = board->isEnabled(&data);
     }
+    else if(function == index_evg_seq_enabled)
+        status = board->isSequencerEnabled(address, &data);
     else {
         cout << "readUInt32Digital: Unknown function" << endl;
         return asynError;
