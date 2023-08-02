@@ -56,5 +56,4 @@ public:
 private:
     asynUser* device;
     int frequency;
-    u16 raw_data;
 };
