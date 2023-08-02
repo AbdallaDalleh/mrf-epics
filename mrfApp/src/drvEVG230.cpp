@@ -28,6 +28,10 @@ EVG230::EVG230(const char* port_name, const char* name, int frequency)
     createParam(EVG_SEQ_Enabled,      asynParamUInt32Digital, &index_evg_seq_enabled);
     createParam(EVG_SEQ_Prescaler,    asynParamInt32,         &index_evg_seq_prescaler);
     createParam(EVG_SEQ_Trigger_Source, asynParamUInt32Digital, &index_evg_seq_trigger_source);
+    createParam(EVG_SEQ0_Event,         asynParamInt32,         &index_seq0_event);
+    createParam(EVG_SEQ0_Event_Time,    asynParamInt32,         &index_seq0_event_time);
+    createParam(EVG_SEQ1_Event,         asynParamInt32,         &index_seq1_event);
+    createParam(EVG_SEQ1_Event_Time,    asynParamInt32,         &index_seq1_event_time);
 
     this->frequency = frequency;
 }
@@ -59,6 +63,10 @@ asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
         status = board->readSequencerPrescaler(address, (u16*) &data);
     else if(function == index_evg_seq_trigger_source)
         status = board->readSequencerTriggerSource(address, (u16*) &data);
+    else if(function == index_seq0_event)
+        status = board->readSequencerEvent(0, address, (u16*) &data);
+    else if(function == index_seq0_event_time)
+        status = board->readSequencerEventTime(0, address, &data);
     else {
         cout << "readInt32: Unknown function" << endl;
         return asynError;
@@ -91,10 +99,11 @@ asynStatus EVG230::writeInt32(asynUser* pasynUser, epicsInt32 value)
     else if(function == index_evg_seq_prescaler)
         status = board->setSequencerPrescaler(address, value);
     else if(function == index_evg_seq_trigger_source)
-    {
-        cout << "V: " << value << endl;
         status = board->setSequencerTriggerSource(address, value);
-    }
+    else if(function == index_seq0_event)
+        status = board->setSequencerEvent(0, address, value);
+    else if(function == index_seq0_event_time)
+        status = board->setSequencerEventTime(0, address, value);
     else {
         cout << "readInt32: Unknown function" << endl;
         return asynError;

@@ -108,17 +108,21 @@ int EVG230Board::setRFPrescaler(u16 data)
 
 int EVG230Board::readACPrescaler(u16* data)
 {
-    int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
-    if(status == 0)
-        *data = (raw_data & AC_DIV) + 1;
+    u16 rawData;
+    int status = readRegister(REGISTER_AC_ENABLE, &rawData);
+    if(status == 0) {
+        *data = (rawData & AC_DIV);
+    }
     return status;
 }
 
 int EVG230Board::setACPrescaler(u16 data)
 {
     int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
-    if(status == 0)
-        status = writeRegister(REGISTER_AC_ENABLE, (raw_data & ~AC_DIV) | (data - 1));
+    if(status == 0) {
+        raw_data &= ~AC_DIV;
+        status = writeRegister(REGISTER_AC_ENABLE, raw_data | data);
+    }
     return status;
 }
 
@@ -187,15 +191,16 @@ int EVG230Board::readSequencerTriggerSource(int seq, u16* data)
 
 int EVG230Board::setSequencerTriggerSource(int seq, u16 data)
 {
-    int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
-    printf("S: %d\n", seq);
-    printf("D: %u\n", data);
-    printf("SEQ Trigger: 0x%04X\n", raw_data);
+    u16 raw_data2;
+    int status;
+    status  = readRegister(REGISTER_AC_ENABLE, &raw_data);
+    status |= readRegister(REGISTER_EVENT_ENABLE, &raw_data2);
     if(status == 0) {
         u16 s = seq ? ACSQ2 : ACSQ1;
-        raw_data = data ? raw_data | s : raw_data & ~s;
-        printf("SEQ Trigger 2 : 0x%04X\n", raw_data);
-        status = writeRegister(REGISTER_AC_ENABLE, raw_data);
+        raw_data  = data ? raw_data | s : raw_data & ~s;
+        raw_data2 = data ? raw_data2 & ~ENVME : raw_data2 | ENVME;
+        status  = writeRegister(REGISTER_EVENT_ENABLE, raw_data2);
+        status |= writeRegister(REGISTER_AC_ENABLE, raw_data);
     }
     return status;
 }
@@ -208,6 +213,61 @@ int EVG230Board::readSequencerPrescaler(int seq, u16* data)
 int EVG230Board::setSequencerPrescaler(int seq, u16 data)
 {
     return writeRegister(seq ? REGISTER_SEQ_CLOCK_SEL2 : REGISTER_SEQ_CLOCK_SEL1, data);
+}
+
+int EVG230Board::readSequencerEvent(int seq, int address, u16* data)
+{
+    int status = writeRegister(seq ? REGISTER_SEQ_ADDRESS1 : REGISTER_SEQ_ADDRESS0, address);
+    if(status == 0) {
+        status = readRegister(seq ? REGISTER_SEQ_CODE1 : REGISTER_SEQ_CODE0, &raw_data);
+        *data = raw_data & 0x00FF;
+    }
+
+    return status;
+}
+
+int EVG230Board::setSequencerEvent(int seq, int address, u16 data)
+{
+    int status = writeRegister(seq ? REGISTER_SEQ_ADDRESS1 : REGISTER_SEQ_ADDRESS0, address);
+    if(status == 0) {
+        status = writeRegister(seq ? REGISTER_SEQ_CODE1 : REGISTER_SEQ_CODE0, data & 0xFF);
+    }
+
+    return status;
+}
+
+int EVG230Board::readSequencerEventTime(int seq, int address, u32* data)
+{
+    int status = writeRegister(seq ? REGISTER_SEQ_ADDRESS1 : REGISTER_SEQ_ADDRESS0, address);
+    if(status == 0) {
+        status = readRegister(seq ? REGISTER_SEQ_TIME1 : REGISTER_SEQ_TIME0, &raw_data);
+        *data = ((u32) raw_data) << 16;
+        status |= readRegister(seq ? REGISTER_SEQ_TIME1 + 2: REGISTER_SEQ_TIME0 + 2, &raw_data);
+        if(status == 0) {
+            *data |= raw_data;
+            printf("S: %d\n", seq);
+            printf("A: %d\n", address);
+            printf("D: %d\n", *data);
+        }
+    }
+
+    return status;
+}
+
+int EVG230Board::setSequencerEventTime(int seq, int address, u32 data)
+{
+    printf("S2: %d\n", seq);
+    printf("A2: %d\n", address);
+    printf("D2: %d\n", data);
+    u16 addr = seq ? REGISTER_SEQ_ADDRESS1 : REGISTER_SEQ_ADDRESS0;
+    u16 time = seq ? REGISTER_SEQ_TIME1    : REGISTER_SEQ_TIME0;
+    int status = writeRegister(addr, address);
+    if(status == 0) {
+        status  = writeRegister(time,     (u16)(data >> 16));
+        status |= writeRegister(time + 2, (u16)(data & 0xFFFF));
+    }
+
+    return status;
 }
 
 int EVG230Board::writeRegister(int reg, u16 data)

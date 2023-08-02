@@ -42,6 +42,10 @@ public:
     int setSequencerPrescaler(int seq, u16 data);
     int readSequencerTriggerSource(int seq, u16* data);
     int setSequencerTriggerSource(int seq, u16 data);
+    int readSequencerEvent(int seq, int address, u16* data);
+    int setSequencerEvent(int seq, int address, u16 data);
+    int readSequencerEventTime(int seq, int address, u32* data);
+    int setSequencerEventTime(int seq, int address, u32 data);
 
     int readRegister(int reg, u16* data);
     int writeRegister(int reg, u16 data);

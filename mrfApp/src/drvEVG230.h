@@ -91,10 +91,10 @@ typedef uint8_t  u8;
 #define EVG_SEQ_Trigger        "SEQ_Trigger"
 
 // mrf-vmeevg230-event.template
-#define SEQ0_Event          "SEQ0_Event"
-#define SEQ1_Event          "SEQ1_Event"
-#define SEQ0_Event_Time     "SEQ0_Event_Time"
-#define SEQ1_Event_Time     "SEQ1_Event_Time"
+#define EVG_SEQ0_Event          "EVG_SEQ0_Event"
+#define EVG_SEQ1_Event          "EVG_SEQ1_Event"
+#define EVG_SEQ0_Event_Time     "EVG_SEQ0_Event_Time"
+#define EVG_SEQ1_Event_Time     "EVG_SEQ1_Event_Time"
 
 // mrf-vmeevg230-counter.template
 #define EVG_MXC_Prescaler   "EVG_MXC_Prescaler"
