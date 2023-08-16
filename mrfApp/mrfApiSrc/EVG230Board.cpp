@@ -262,12 +262,8 @@ int EVG230Board::readSequencerEventTime(int seq, int address, u32* data)
         status = readRegister(seq ? REGISTER_SEQ_TIME1 : REGISTER_SEQ_TIME0, &raw_data);
         *data = ((u32) raw_data) << 16;
         status |= readRegister(seq ? REGISTER_SEQ_TIME1 + 2: REGISTER_SEQ_TIME0 + 2, &raw_data);
-        if(status == 0) {
+        if(status == 0)
             *data |= raw_data;
-            printf("S: %d\n", seq);
-            printf("A: %d\n", address);
-            printf("D: %d\n", *data);
-        }
     }
 
     return status;

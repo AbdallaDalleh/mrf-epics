@@ -67,6 +67,10 @@ asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
         status = board->readSequencerEvent(0, address, (u16*) &data);
     else if(function == index_seq0_event_time)
         status = board->readSequencerEventTime(0, address, &data);
+    else if(function == index_seq1_event)
+        status = board->readSequencerEvent(1, address, (u16*) &data);
+    else if(function == index_seq1_event_time)
+        status = board->readSequencerEventTime(1, address, &data);
     else {
         cout << "readInt32: Unknown function" << endl;
         return asynError;
@@ -104,6 +108,10 @@ asynStatus EVG230::writeInt32(asynUser* pasynUser, epicsInt32 value)
         status = board->setSequencerEvent(0, address, value);
     else if(function == index_seq0_event_time)
         status = board->setSequencerEventTime(0, address, value);
+    else if(function == index_seq1_event)
+        status = board->setSequencerEvent(1, address, value);
+    else if(function == index_seq1_event_time)
+        status = board->setSequencerEventTime(1, address, value);
     else {
         cout << "readInt32: Unknown function" << endl;
         return asynError;
