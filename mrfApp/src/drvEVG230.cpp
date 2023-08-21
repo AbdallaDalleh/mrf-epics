@@ -32,6 +32,7 @@ EVG230::EVG230(const char* port_name, const char* name, int frequency)
     createParam(EVG_SEQ0_Event_Time,    asynParamInt32,         &index_seq0_event_time);
     createParam(EVG_SEQ1_Event,         asynParamInt32,         &index_seq1_event);
     createParam(EVG_SEQ1_Event_Time,    asynParamInt32,         &index_seq1_event_time);
+	createParam(EVG_SEQ_Trigger,      asynParamUInt32Digital,   &index_evg_seq_trigger);
 
     this->frequency = frequency;
 }
@@ -131,6 +132,8 @@ asynStatus EVG230::writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, ep
         status = (value & mask) == 0x0 ? board->disable() : board->enable();
     else if(function == index_evg_seq_enabled)
         status = (value & mask) ? board->enableSequencer(address) : board->disableSequencer(address);
+	else if(function == index_evg_seq_trigger)
+		status = board->triggerSequencer(address);
     else {
         cout << "writeUInt32Digital: Unknown function" << endl;
         return asynError;
@@ -152,6 +155,8 @@ asynStatus EVG230::readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, ep
     }
     else if(function == index_evg_seq_enabled)
         status = board->isSequencerEnabled(address, &data);
+	else if(function == index_evg_seq_trigger)
+		return asynSuccess;
     else {
         cout << "readUInt32Digital: Unknown function" << endl;
         return asynError;
@@ -173,12 +178,13 @@ extern "C" {
     static const iocshArg arg0 = { "Name", iocshArgString };
     static const iocshArg arg1 = { "Name", iocshArgString };
     static const iocshArg arg2 = { "Frequency", iocshArgInt };
-    static const iocshArg* const configArgs[] = {&arg0, &arg1};
+    static const iocshArg* const configArgs[] = {&arg0, &arg1, &arg2};
 
-    static const iocshFuncDef configFuncDef = {"EVG230Configure", 2, configArgs};
+    static const iocshFuncDef configFuncDef = {"EVG230Configure", 3, configArgs};
     static void configCallFunc(const iocshArgBuf *args)
     {
         EVG230Configure(args[0].sval, args[1].sval, args[2].ival);
+		printf("FF: %d\n", args[2].ival);
     }
 
     void drvEVG230Register(void)

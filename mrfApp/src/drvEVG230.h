@@ -88,7 +88,7 @@ typedef uint8_t  u8;
 #define EVG_SEQ_Enabled        "EVG_SEQ_Enabled"
 #define EVG_SEQ_Trigger_Source "EVG_SEQ_Trigger_Source"
 #define EVG_SEQ_Prescaler      "EVG_SEQ_Prescaler"
-#define EVG_SEQ_Trigger        "SEQ_Trigger"
+#define EVG_SEQ_Trigger        "EVG_SEQ_Trigger"
 
 // mrf-vmeevg230-event.template
 #define EVG_SEQ0_Event          "EVG_SEQ0_Event"

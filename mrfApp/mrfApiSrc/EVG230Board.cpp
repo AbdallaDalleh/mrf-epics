@@ -13,6 +13,9 @@ EVG230Board::EVG230Board(string asyn_name, int frequency)
 
     this->error = 0;
     this->frequency = frequency;
+	std::cout << "Freq: " << this->frequency << std::endl;
+	enable();
+	writeRegister(REGISTER_USEC_DIVIDER, this->frequency);
 }
 
 int EVG230Board::enable()
@@ -280,6 +283,19 @@ int EVG230Board::setSequencerEventTime(int seq, int address, u32 data)
     }
 
     return status;
+}
+
+int EVG230Board::triggerSequencer(int seq)
+{
+	u16 control;
+	int status;
+
+	status = readRegister(REGISTER_CONTROL, &control);
+	if(status == 0) {
+		status = writeRegister(REGISTER_CONTROL, control | (seq == 0 ? VTRG1 : VTRG2));
+	}
+
+	return status;
 }
 
 int EVG230Board::writeRegister(int reg, u16 data)

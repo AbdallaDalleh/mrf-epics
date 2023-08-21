@@ -46,6 +46,7 @@ public:
     int setSequencerEvent(int seq, int address, u16 data);
     int readSequencerEventTime(int seq, int address, u32* data);
     int setSequencerEventTime(int seq, int address, u32 data);
+	int triggerSequencer(int seq);
 
     int readRegister(int reg, u16* data);
     int writeRegister(int reg, u16 data);
