@@ -1,9 +1,13 @@
 
-#define BASE_ADDRESS 0x7A000000
+#define BASE_ADDRESS      0x7A000000
+#define OTP_SELECT_OFFSET 16
 
 #define EVR230_CONTROL      0x00
 #define EVR230_OTP_ENABLE   0x06
+#define EVR230_PULSE_SELECT 0x1A
 #define EVR230_USEC_DIVIDER 0x4E
+#define EVR230_PULSE_DELAY  0x6C
+#define EVR230_PULSE_WIDTH  0x70
 
 // Control/Status Register
 // Address: 0x00
