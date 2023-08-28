@@ -140,7 +140,7 @@ int evr230_flush(asynUser* device)
 	return status;
 }
 
-int evr230_enable_otp(asynUser* device, int output, int enable)
+int evr230_enable_otp(asynUser* device, u16 output, u16 enable)
 {
 	u16 data;
 	int status;
@@ -169,7 +169,7 @@ int evr230_is_otp_enabled(asynUser* device, u16 output, u16* enabled)
 	return status;
 }
 
-int evr230_set_otp_delay(asynUser* device, u16 output, float delay)
+int evr230_set_otp_delay(asynUser* device, u16 output, double delay)
 {
 	int status;
 	u32 cycles;
@@ -183,11 +183,11 @@ int evr230_set_otp_delay(asynUser* device, u16 output, float delay)
 	if(status != asynSuccess)
 		return -1;
 
-	status = evr230_write(device, EVR230_PULSE_DELAY + 2, (u16)(cycles & 0xFF));
+	status = evr230_write(device, EVR230_PULSE_DELAY + 2, (u16)(cycles & 0xFFFF));
 	return status;
 }
 
-int evr230_get_otp_delay(asynUser* device, u16 output, float* delay)
+int evr230_get_otp_delay(asynUser* device, u16 output, double* delay)
 {
 	int status;
 	u16 data;
@@ -201,7 +201,7 @@ int evr230_get_otp_delay(asynUser* device, u16 output, float* delay)
 	if(status != asynSuccess)
 		return -1;
 
-	cycles = (u32)(data) << 16;
+	cycles = data << 16;
 	status = evr230_read(device, EVR230_PULSE_DELAY + 2, &data);
 	if(status != asynSuccess)
 		return -1;
@@ -211,7 +211,7 @@ int evr230_get_otp_delay(asynUser* device, u16 output, float* delay)
 	return status;
 }
 
-int evr230_set_otp_width(asynUser* device, u16 output, float width)
+int evr230_set_otp_width(asynUser* device, u16 output, double width)
 {
 	int status;
 	u16 cycles;
@@ -225,7 +225,7 @@ int evr230_set_otp_width(asynUser* device, u16 output, float width)
 	return status;
 }
 
-int evr230_get_otp_width(asynUser* device, u16 output, float* width)
+int evr230_get_otp_width(asynUser* device, u16 output, double* width)
 {
 	int status;
 	u16 data;
@@ -234,11 +234,11 @@ int evr230_get_otp_width(asynUser* device, u16 output, float* width)
 	if(status != asynSuccess)
 		return -1;
 
-	status = evr230_read(device, EVR230_PULSE_WIDTH, &data);
+	status = evr230_read(device, EVR230_PULSE_WIDTH + 2, &data);
 	if(status != asynSuccess)
 		return -1;
 
-	*width = data / (double) device_frequency;
+	*width = data / (double) device_frequency;	
 	return status;
 }
 

@@ -47,6 +47,8 @@ public:
 	virtual asynStatus writeInt32(asynUser* asyn_user, epicsInt32 value);
 	virtual asynStatus readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, epicsUInt32 mask);
     virtual asynStatus writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, epicsUInt32 mask);
+	virtual asynStatus readFloat64(asynUser* asyn_user, epicsFloat64* value);
+	virtual asynStatus writeFloat64(asynUser* asyn_user, epicsFloat64 value);
 
 protected:
     int index_evr_clock;
@@ -54,6 +56,9 @@ protected:
 	int index_evr_rx_violation;
 	int index_evr_reset_rx;
 	int index_evr_enable;
+	int index_evr_otp_enable;
+	int index_evr_otp_delay;
+	int index_evr_otp_width;
 
 private:
 	asynUser* device;

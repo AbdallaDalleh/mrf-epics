@@ -5,8 +5,8 @@ EVR230::EVR230(const char* port_name, const char* asyn_name, int frequency)
 	: asynPortDriver(
 			port_name,
 			256,
-			asynInt32Mask | asynUInt32DigitalMask | asynDrvUserMask,
-			asynInt32Mask | asynUInt32DigitalMask,
+			asynInt32Mask | asynUInt32DigitalMask | asynFloat64Mask | asynDrvUserMask,
+			asynInt32Mask | asynUInt32DigitalMask | asynFloat64Mask,
 			ASYN_MULTIDEVICE | ASYN_CANBLOCK,
 			1, 0, 0)
 {
@@ -28,6 +28,9 @@ EVR230::EVR230(const char* port_name, const char* asyn_name, int frequency)
 	createParam(EVR_RX_Violation,     asynParamUInt32Digital, &index_evr_rx_violation);
 	createParam(EVR_Reset_RX,         asynParamInt32,         &index_evr_reset_rx);
 	createParam(EVR_Enable,           asynParamUInt32Digital, &index_evr_enable);
+	createParam(EVR_Pulser_Enable,    asynParamUInt32Digital, &index_evr_otp_enable);
+	createParam(EVR_Pulser_Delay,     asynParamFloat64,       &index_evr_otp_delay);
+	createParam(EVR_Pulser_Width,     asynParamFloat64,       &index_evr_otp_width);
 }
 
 asynStatus EVR230::readInt32(asynUser* asyn_user, epicsInt32* value)
@@ -77,14 +80,18 @@ asynStatus EVR230::readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, ep
 {
 	int status;
 	int function;
+	int address;
 	u16 data;
 
 	function = asyn_user->reason;
+	getAddress(asyn_user, &address);
 	if(function == index_evr_rx_violation)
 		status = evr230_is_rx_violation(device, &data);
 	else if(function == index_evr_enable) {
 		status = evr230_is_enabled(device, &data);
 	}
+	else if(function == index_evr_otp_enable)
+		status = evr230_is_otp_enabled(device, address, &data);
 	else {
 		printf("readUInt32Digital: Unknown function: %d\n", function);
 		return asynError;
@@ -103,11 +110,14 @@ asynStatus EVR230::writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, ep
 {
 	int status;
 	int function;
+	int address;
  
 	function = asyn_user->reason;
-	if(function == index_evr_enable) {
+	getAddress(asyn_user, &address);
+	if(function == index_evr_enable)
 		status = evr230_enable(device, value);
-	}
+	else if(function == index_evr_otp_enable)
+		status = evr230_enable_otp(device, address, value);
 	else {
 		printf("writeUInt32Digital: Unknown function: %d\n", function);
 		return asynError;
@@ -115,6 +125,57 @@ asynStatus EVR230::writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, ep
 
 	return (asynStatus) status;
 }
+
+asynStatus EVR230::readFloat64(asynUser* asyn_user, epicsFloat64* value)
+{
+	int status;
+	int function;
+	int address;
+	double data;
+
+	function = asyn_user->reason;
+	getAddress(asyn_user, &address);
+	if(function == index_evr_otp_delay)
+		status = evr230_get_otp_delay(device, address, &data);
+	else if(function == index_evr_otp_width)
+		status = evr230_get_otp_width(device, address, &data);
+	else {
+		printf("readFloat64: Unknown function %d\n", function);
+		return asynError;
+	}
+
+	if(status != asynSuccess) {
+		printf("readFloat64: I/O error\n");
+		return asynError;
+	}
+
+	*value = data;
+	return asynSuccess;
+}
+
+asynStatus EVR230::writeFloat64(asynUser* asyn_user, epicsFloat64 value)
+{
+	int status;
+	int function;
+	int address;
+
+	function = asyn_user->reason;
+	getAddress(asyn_user, &address);
+	if(function == index_evr_otp_delay)
+		status = evr230_set_otp_delay(device, address, value);
+	else if(function == index_evr_otp_width)
+		status = evr230_set_otp_width(device, address, value);
+	else {
+		printf("writeFloat64: Unknown function %d\n", function);
+		return asynError;
+	}
+
+	if(status != asynSuccess)
+		printf("writeFloat64: I/O error\n");
+
+	return (asynStatus) status;
+}
+
 extern "C" {
 
     asynStatus EVR230Configure(const char* port_name, const char* name, int frequency) {
