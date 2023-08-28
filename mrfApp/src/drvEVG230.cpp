@@ -184,7 +184,6 @@ extern "C" {
     static void configCallFunc(const iocshArgBuf *args)
     {
         EVG230Configure(args[0].sval, args[1].sval, args[2].ival);
-		printf("FF: %d\n", args[2].ival);
     }
 
     void drvEVG230Register(void)

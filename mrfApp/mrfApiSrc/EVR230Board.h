@@ -16,8 +16,10 @@ using std::string;
 #include "types.h"
 
 int evr230_init(asynUser* device, const char* asyn_name, u32 frequency);
+int evr230_get_firmware_version(asynUser* device, u16* value);
 int evr230_enable(asynUser* device, int enable);
 int evr230_is_enabled(asynUser* device, int* enabled);
+int evr230_reset_rx(asynUser* device);
 int evr230_set_clock(asynUser* device, u16 clock);
 int evr230_get_clock(asynUser* device, u16* clock);
 int evr230_flush(asynUser* device);

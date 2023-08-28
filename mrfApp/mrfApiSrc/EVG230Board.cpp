@@ -13,7 +13,6 @@ EVG230Board::EVG230Board(string asyn_name, int frequency)
 
     this->error = 0;
     this->frequency = frequency;
-	std::cout << "Freq: " << this->frequency << std::endl;
 	enable();
 	writeRegister(REGISTER_USEC_DIVIDER, this->frequency);
 }

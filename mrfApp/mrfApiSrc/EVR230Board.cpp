@@ -5,13 +5,8 @@ static u32 device_frequency;
 
 int evr230_init(asynUser* device, const char* asyn_name, u32 frequency)
 {
-    int status = pasynOctetSyncIO->connect(asyn_name, 1, &device, NULL);
-	if(status != asynSuccess) {
-		// TODO: Error reporting.
-		printf("Could not connect to device %s\n", asyn_name);
-		return -1;
-	}
-
+	int status;
+	
 	status = evr230_set_clock(device, frequency);
 	if(status != 0) {
 		printf("Could not set device device_frequency.\n");
@@ -25,7 +20,7 @@ int evr230_init(asynUser* device, const char* asyn_name, u32 frequency)
 		return -1;
 	}
 
-	printf("Device initialized successfully.\n");
+	printf("\nDevice %s initialized successfully.\n\n", asyn_name);
 	return 0;
 }
 
@@ -231,6 +226,32 @@ int evr230_get_otp_width(asynUser* device, u16 output, float* width)
 		return -1;
 
 	*width = data / (double) device_frequency;
+	return status;
+}
+
+int evr230_reset_rx(asynUser* device)
+{
+	int status;
+	u16 data;
+
+	status = evr230_read(device, EVR230_CONTROL, &data);
+	if(status != asynSuccess)
+		return -1;
+
+	status = evr230_write(device, EVR230_CONTROL, data | RXVIO);
+	return status;
+}
+
+int evr230_get_firmware_version(asynUser* device, u16* value)
+{
+	int status;
+	u16 data;
+
+	status = evr230_read(device, EVR230_FIRMWARE_VERSION, &data);
+	if(status != asynSuccess)
+		return -1;
+
+	*value = data;
 	return status;
 }
 

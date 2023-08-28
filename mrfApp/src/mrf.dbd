@@ -6,3 +6,5 @@
 #variable(myVariable)
 
 registrar(drvEVG230Register)
+registrar(drvEVR230Register)
+
