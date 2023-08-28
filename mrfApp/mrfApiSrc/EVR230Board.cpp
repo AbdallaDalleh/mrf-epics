@@ -6,7 +6,13 @@ static u32 device_frequency;
 int evr230_init(asynUser* device, const char* asyn_name, u32 frequency)
 {
 	int status;
-	
+		
+	status = evr230_enable(device, 1);
+	if(status != 0) {
+		printf("Could not enable device %s\n", asyn_name);
+		return -1;
+	}
+
 	status = evr230_set_clock(device, frequency);
 	if(status != 0) {
 		printf("Could not set device device_frequency.\n");
@@ -80,20 +86,20 @@ int evr230_write(asynUser* device, int reg, u16 data)
 
     memcpy(&message, rx_buffer, sizeof(message_t));
     if(ntohs(message.status) != 0 /*|| ntohs(message.data) != data*/) {
-        return status;
+        return asynError;
     }
     return asynSuccess;
 }
 
 
-int evr230_enable(asynUser* device, int enable)
+int evr230_enable(asynUser* device, u16 enable)
 {
-	int state = enable ? (EVREN | MAPEN) : 0;
+	u16 state = enable ? (EVREN | MAPEN) : 0;
 	int status = evr230_write(device, EVR230_CONTROL, state);
 	return status;
 }
 
-int evr230_is_enabled(asynUser* device, int* enabled)
+int evr230_is_enabled(asynUser* device, u16* enabled)
 {
 	u16 data;
 	int status = evr230_read(device, EVR230_CONTROL, &data);
@@ -123,7 +129,14 @@ int evr230_get_clock(asynUser* device, u16* clock)
 
 int evr230_flush(asynUser* device)
 {
-	int status = evr230_write(device, EVR230_CONTROL, NFRAM);
+	int status;
+	u16 data;
+
+	status = evr230_read(device, EVR230_CONTROL, &data);
+	if(status != asynSuccess)
+		return 1;
+
+	status = evr230_write(device, EVR230_CONTROL, data | NFRAM);
 	return status;
 }
 
@@ -236,9 +249,22 @@ int evr230_reset_rx(asynUser* device)
 
 	status = evr230_read(device, EVR230_CONTROL, &data);
 	if(status != asynSuccess)
-		return -1;
+		return 1;
 
 	status = evr230_write(device, EVR230_CONTROL, data | RXVIO);
+	return status;
+}
+
+int evr230_is_rx_violation(asynUser* device, u16* value)
+{
+	int status;
+	u16 data;
+
+	status = evr230_read(device, EVR230_CONTROL, &data);
+	if(status != asynSuccess)
+		return -1;
+
+	*value = (data & RXVIO) == RXVIO;
 	return status;
 }
 
