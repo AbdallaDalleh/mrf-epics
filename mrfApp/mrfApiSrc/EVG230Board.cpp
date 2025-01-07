@@ -19,23 +19,15 @@ EVG230Board::EVG230Board(string asyn_name, int frequency)
 
 int EVG230Board::enable()
 {
-    u16 raw_data;
     int status;
-    
-    status = readRegister(REGISTER_CONTROL, &raw_data);
-    if(status != 0)
-        return status;
-    
+
     status = writeRegister(REGISTER_CONTROL, ~MSDIS & (FF | RSFIFO | DFIFO | RXVIO));
     return status;    
 }
 
 int EVG230Board::disable()
 {
-    u16 raw_data;
-    int status = readRegister(REGISTER_CONTROL, &raw_data);
-    if(status == 0)
-        status = writeRegister(REGISTER_CONTROL, MSDIS | FF | RSFIFO | DFIFO | RXVIO);
+    int status = writeRegister(REGISTER_CONTROL, MSDIS | FF | RSFIFO | DFIFO | RXVIO);
     return status;    
 }
 

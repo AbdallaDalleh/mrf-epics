@@ -22,6 +22,7 @@ EVR230::EVR230(const char* port_name, const char* asyn_name, int frequency)
 	status = evr230_init(device, asyn_name, frequency);
 	if(status != 0)
 		return;
+	this->frequency = frequency;
 
 	createParam(EVR_Clock,            asynParamInt32,         &index_evr_clock);
 	createParam(EVR_Firmware_Version, asynParamInt32,         &index_evr_firmware);
@@ -31,6 +32,7 @@ EVR230::EVR230(const char* port_name, const char* asyn_name, int frequency)
 	createParam(EVR_Pulser_Enable,    asynParamUInt32Digital, &index_evr_otp_enable);
 	createParam(EVR_Pulser_Delay,     asynParamFloat64,       &index_evr_otp_delay);
 	createParam(EVR_Pulser_Width,     asynParamFloat64,       &index_evr_otp_width);
+	createParam(EVR_Connect,          asynParamInt32,         &index_evr_connect);
 }
 
 asynStatus EVR230::readInt32(asynUser* asyn_user, epicsInt32* value)
@@ -44,7 +46,7 @@ asynStatus EVR230::readInt32(asynUser* asyn_user, epicsInt32* value)
 		status = evr230_get_clock(device, &data);
 	else if(function == index_evr_firmware)
 		status = evr230_get_firmware_version(device, &data);
-	else if(function == index_evr_reset_rx)
+	else if(function == index_evr_reset_rx || function == index_evr_connect)
 		return asynSuccess;
 	else {
 		printf("readInt32: Unknown function: %d\n", function);
@@ -68,6 +70,13 @@ asynStatus EVR230::writeInt32(asynUser* asyn_user, epicsInt32 value)
 	function = asyn_user->reason;
 	if(function == index_evr_reset_rx)
 		status = evr230_reset_rx(device);
+	else if(function == index_evr_connect) {
+		printf("CONNECT EVR CLOCK: %d\n", this->frequency);
+		evr230_enable(device, 1);
+		evr230_set_clock(device, this->frequency);
+		evr230_flush(device);
+		// evr230_reset_rx(device);
+	}
 	else {
 		printf("writeInt32: Unknown function %d \n", function);
 		return asynError;

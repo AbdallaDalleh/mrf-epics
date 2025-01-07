@@ -83,6 +83,7 @@ typedef uint8_t  u8;
 #define EVG_AC_Prescaler        "EVG_AC_Prescaler"
 #define EVG_Software_Event      "EVG_Software_Event"
 #define EVG_Firmware_Version    "EVG_Firmware_Version"
+#define EVG_Connect             "EVG_Connect"
 
 // mrf-vmeevg230-sequencer.template
 #define EVG_SEQ_Enabled        "EVG_SEQ_Enabled"
@@ -134,6 +135,7 @@ protected:
     int index_evg_ac_prescaler;
     int index_evg_software_event;
     int index_evg_firmware;
+	int index_evg_connect;
 
     int index_evg_seq_enabled;
     int index_evg_seq_trigger_source;

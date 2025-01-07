@@ -33,6 +33,7 @@ EVG230::EVG230(const char* port_name, const char* name, int frequency)
     createParam(EVG_SEQ1_Event,         asynParamInt32,         &index_seq1_event);
     createParam(EVG_SEQ1_Event_Time,    asynParamInt32,         &index_seq1_event_time);
 	createParam(EVG_SEQ_Trigger,      asynParamUInt32Digital,   &index_evg_seq_trigger);
+	createParam(EVG_Connect,          asynParamInt32,           &index_evg_connect);
 
     this->frequency = frequency;
 }
@@ -72,6 +73,8 @@ asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
         status = board->readSequencerEvent(1, address, (u16*) &data);
     else if(function == index_seq1_event_time)
         status = board->readSequencerEventTime(1, address, &data);
+	else if(function == index_evg_connect)
+		return asynSuccess;
     else {
         cout << "readInt32: Unknown function" << endl;
         return asynError;
@@ -113,6 +116,16 @@ asynStatus EVG230::writeInt32(asynUser* pasynUser, epicsInt32 value)
         status = board->setSequencerEvent(1, address, value);
     else if(function == index_seq1_event_time)
         status = board->setSequencerEventTime(1, address, value);
+	else if(function == index_evg_connect) {
+		printf("Connect EVG CLOCK: %d\n", this->frequency);
+		board->enable();
+		board->writeRegister(REGISTER_USEC_DIVIDER, this->frequency);
+		board->enableSequencer(0);
+		board->enableSequencer(1);
+		board->setRFSource(1);
+		board->setACSyncSource(1);
+		board->setACPrescaler(50);
+	}
     else {
         cout << "readInt32: Unknown function" << endl;
         return asynError;

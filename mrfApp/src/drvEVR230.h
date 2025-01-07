@@ -37,6 +37,7 @@ typedef uint8_t  u8;
 #define EVR_Firmware_Version    "EVR_Firmware_Version"
 #define EVR_TTL_Source          "EVR_TTL_Source"
 #define EVR_Universal_Source    "EVR_Universal_Source"
+#define EVR_Connect             "EVR_Connect"
 
 class EVR230 : public asynPortDriver
 {
@@ -59,9 +60,11 @@ protected:
 	int index_evr_otp_enable;
 	int index_evr_otp_delay;
 	int index_evr_otp_width;
+	int index_evr_connect;
 
 private:
 	asynUser* device;
+	int frequency;
 };
 
 #endif
