@@ -33,19 +33,28 @@ EVR230::EVR230(const char* port_name, const char* asyn_name, int frequency)
 	createParam(EVR_Pulser_Delay,     asynParamFloat64,       &index_evr_otp_delay);
 	createParam(EVR_Pulser_Width,     asynParamFloat64,       &index_evr_otp_width);
 	createParam(EVR_Connect,          asynParamInt32,         &index_evr_connect);
+    createParam("EVR_TTL_Source",     asynParamInt32,         &index_evr_ttl_source);
+
+    // enable event map, testing only ...
+    evr230_write(device, 0x02,  1);
+    evr230_write(device, 0x04, 0x3);
 }
 
 asynStatus EVR230::readInt32(asynUser* asyn_user, epicsInt32* value)
 {
 	int status;
 	int function;
-	u16 data;
+	int address;
+    u16 data;
 
 	function = asyn_user->reason;
+	getAddress(asyn_user, &address);
 	if(function == index_evr_clock)
 		status = evr230_get_clock(device, &data);
 	else if(function == index_evr_firmware)
 		status = evr230_get_firmware_version(device, &data);
+    else if(function == index_evr_ttl_source)
+        status = evr230_get_ttl_source(device, address, &data);
 	else if(function == index_evr_reset_rx || function == index_evr_connect)
 		return asynSuccess;
 	else {
@@ -66,17 +75,21 @@ asynStatus EVR230::writeInt32(asynUser* asyn_user, epicsInt32 value)
 {
 	int status;
 	int function;
+    int address;
 
 	function = asyn_user->reason;
+	getAddress(asyn_user, &address);
 	if(function == index_evr_reset_rx)
 		status = evr230_reset_rx(device);
 	else if(function == index_evr_connect) {
 		printf("CONNECT EVR CLOCK: %d\n", this->frequency);
-		evr230_enable(device, 1);
-		evr230_set_clock(device, this->frequency);
-		evr230_flush(device);
+		status  = evr230_enable(device, 1);
+		status |= evr230_set_clock(device, this->frequency);
+		status |= evr230_flush(device);
 		// evr230_reset_rx(device);
 	}
+    else if (function == index_evr_ttl_source)
+        status = evr230_set_ttl_source(device, address, (u16) value);
 	else {
 		printf("writeInt32: Unknown function %d \n", function);
 		return asynError;

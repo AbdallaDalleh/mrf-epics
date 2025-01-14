@@ -30,6 +30,8 @@ int evr230_set_otp_delay(asynUser* device, u16 output, double  delay);
 int evr230_get_otp_delay(asynUser* device, u16 output, double* delay);
 int evr230_set_otp_width(asynUser* device, u16 output, double  width);
 int evr230_get_otp_width(asynUser* device, u16 output, double* width);
+int evr230_set_ttl_source(asynUser* device, u16 ttl, u16 source);
+int evr230_get_ttl_source(asynUser* device, u16 ttl, u16* source);
 
 int evr230_read(asynUser* device, int address, u16* data);
 int evr230_write(asynUser* device, int address, u16 data);

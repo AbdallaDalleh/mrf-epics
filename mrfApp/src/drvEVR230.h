@@ -61,6 +61,7 @@ protected:
 	int index_evr_otp_delay;
 	int index_evr_otp_width;
 	int index_evr_connect;
+    int index_evr_ttl_source;
 
 private:
 	asynUser* device;

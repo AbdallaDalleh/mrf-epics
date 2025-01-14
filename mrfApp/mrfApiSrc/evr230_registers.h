@@ -9,6 +9,7 @@
 #define EVR230_USEC_DIVIDER      0x4E
 #define EVR230_PULSE_DELAY       0x6C
 #define EVR230_PULSE_WIDTH       0x70
+#define EVR230_FP_MAP(x)        (0x40 + x*2)
 
 // Control/Status Register
 // Address: 0x00
