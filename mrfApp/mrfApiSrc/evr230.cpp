@@ -1,5 +1,5 @@
 
-#include "EVR230Board.h"
+#include "evr230.h"
 
 static u32 device_frequency;
 

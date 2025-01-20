@@ -43,7 +43,6 @@ asynStatus EVG230::readInt32(asynUser* pasynUser, epicsInt32* value)
     int function = pasynUser->reason;
     int address;
     int status;
-    int reg;
     u32 data;
 
     getAddress(pasynUser, &address);
@@ -91,7 +90,6 @@ asynStatus EVG230::writeInt32(asynUser* pasynUser, epicsInt32 value)
     int address;
     int status = asynSuccess;
     int function = pasynUser->reason;
-    int reg;
 
     getAddress(pasynUser, &address);
     if(function == index_evg_rf_source)

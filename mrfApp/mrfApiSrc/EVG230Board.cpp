@@ -85,7 +85,7 @@ int EVG230Board::setACSyncSource(u16 source)
     u16 data;
     int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
     if(status == 0) {
-        data = source == AC_SOURCE_EVENT ? data & ~ACSYNC : data | ACSYNC;
+        data = source == AC_SOURCE_EVENT ? raw_data & ~ACSYNC : raw_data | ACSYNC;
         status = writeRegister(REGISTER_AC_ENABLE, data);
     }
 
@@ -141,18 +141,17 @@ int EVG230Board::readMXCPrescaler(int counter, u32* data)
         value <<= 16;
         status  = writeRegister(REGISTER_MXC_CONTROL, counter);
         status |= readRegister(REGISTER_MXC_PRESCALER, &raw_data);
-        if(status == 0)
+        if(status == 0) {
             value |= raw_data;
+            *data = value;
+        }
     }
 
-    *data = value;
     return status;
 }
 
 int EVG230Board::setMXCPrescaler(int counter, u32 data)
 {
-    u16 raw_data;
-    u32 value;
     int status = writeRegister(REGISTER_MXC_CONTROL, counter | MXHSEL);
     status    |= writeRegister(REGISTER_MXC_PRESCALER, (u16)(data >> 16));
     if(status == 0) {

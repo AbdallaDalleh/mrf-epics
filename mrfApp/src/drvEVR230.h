@@ -13,7 +13,7 @@ using std::endl;
 #include <iocsh.h>
 #include <asynOctetSyncIO.h>
 
-#include "EVR230Board.h"
+#include "evr230.h"
 
 typedef uint32_t u32;
 typedef uint16_t u16;
