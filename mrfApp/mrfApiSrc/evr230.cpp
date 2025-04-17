@@ -284,7 +284,7 @@ int evr230_get_firmware_version(asynUser* device, u16* value)
 int evr230_set_ttl_source(asynUser* device, u16 ttl, u16 source)
 {
     printf("ttl %d source=%d\n", ttl, source);
-    return evr230_write(device, EVR230_FP_MAP(ttl * 2), source);
+    return evr230_write(device, EVR230_FP_TTL(ttl), source);
 }
 
 int evr230_get_ttl_source(asynUser* device, u16 ttl, u16* source)
@@ -292,7 +292,7 @@ int evr230_get_ttl_source(asynUser* device, u16 ttl, u16* source)
     int status;
     u16 data;
 
-    status = evr230_read(device, EVR230_FP_MAP(ttl * 2), &data);
+    status = evr230_read(device, EVR230_FP_TTL(ttl), &data);
     if (status != asynSuccess)
         return -1;
 
