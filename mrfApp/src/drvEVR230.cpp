@@ -34,10 +34,12 @@ EVR230::EVR230(const char* port_name, const char* asyn_name, int frequency)
 	createParam(EVR_Pulser_Width,     asynParamFloat64,       &index_evr_otp_width);
 	createParam(EVR_Connect,          asynParamInt32,         &index_evr_connect);
     createParam("EVR_TTL_Source",     asynParamInt32,         &index_evr_ttl_source);
+    createParam(EVR_Universal_Source, asynParamInt32,         &index_evr_univ_source);
 
     // enable event map, testing only ...
     evr230_write(device, 0x02,  1);
-    evr230_write(device, 0x04, 0x3);
+    evr230_write(device, 0x04, 0x3FFF);
+    evr230_write(device, 0x42, 0x0F);
 }
 
 asynStatus EVR230::readInt32(asynUser* asyn_user, epicsInt32* value)
@@ -55,6 +57,8 @@ asynStatus EVR230::readInt32(asynUser* asyn_user, epicsInt32* value)
 		status = evr230_get_firmware_version(device, &data);
     else if(function == index_evr_ttl_source)
         status = evr230_get_ttl_source(device, address, &data);
+    else if(function == index_evr_univ_source)
+        status = evr230_get_universal_source(device, address, &data);
 	else if(function == index_evr_reset_rx || function == index_evr_connect)
 		return asynSuccess;
 	else {
@@ -90,6 +94,8 @@ asynStatus EVR230::writeInt32(asynUser* asyn_user, epicsInt32 value)
 	}
     else if (function == index_evr_ttl_source)
         status = evr230_set_ttl_source(device, address, (u16) value);
+    else if (function == index_evr_univ_source)
+        status = evr230_set_universal_source(device, address, value);
 	else {
 		printf("writeInt32: Unknown function %d \n", function);
 		return asynError;

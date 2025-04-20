@@ -23,7 +23,8 @@ using std::string;
 #define EVR230_USEC_DIVIDER      0x4E
 #define EVR230_PULSE_DELAY       0x6C
 #define EVR230_PULSE_WIDTH       0x70
-#define EVR230_FP_MAP(x)        (0x40 + x*2)
+#define EVR230_FP_TTL(x)        (0x40 + x*2)
+#define EVR230_FP_UNIV(x)       (0x90 + x*2)
 
 // Control/Status Register
 // Address: 0x00
@@ -67,6 +68,8 @@ int evr230_set_otp_width(asynUser* device, u16 output, double  width);
 int evr230_get_otp_width(asynUser* device, u16 output, double* width);
 int evr230_set_ttl_source(asynUser* device, u16 ttl, u16 source);
 int evr230_get_ttl_source(asynUser* device, u16 ttl, u16* source);
+int evr230_set_universal_source(asynUser* device, u16 univ, u16  source);
+int evr230_get_universal_source(asynUser* device, u16 univ, u16* source);
 
 int evr230_read(asynUser* device, int address, u16* data);
 int evr230_write(asynUser* device, int address, u16 data);
