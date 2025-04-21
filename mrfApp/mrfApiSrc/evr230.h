@@ -18,7 +18,9 @@ using std::string;
 
 #define EVR230_CONTROL           0x00
 #define EVR230_OTP_ENABLE        0x06
+#define EVR230_PDP_ENABLE        0x18
 #define EVR230_PULSE_SELECT      0x1A
+#define EVR230_PDP_PRESCALER     0x28
 #define EVR230_FIRMWARE_VERSION  0x2E
 #define EVR230_USEC_DIVIDER      0x4E
 #define EVR230_PULSE_DELAY       0x6C
@@ -50,6 +52,7 @@ using std::string;
 // Output pulse enable.
 // Address: 0x06.
 #define OTP(x) (1U << x)
+#define PDP(x) (1U << x)
 
 int evr230_init(asynUser* device, const char* asyn_name, u32 frequency);
 int evr230_get_firmware_version(asynUser* device, u16* value);
@@ -70,6 +73,10 @@ int evr230_set_ttl_source(asynUser* device, u16 ttl, u16 source);
 int evr230_get_ttl_source(asynUser* device, u16 ttl, u16* source);
 int evr230_set_universal_source(asynUser* device, u16 univ, u16  source);
 int evr230_get_universal_source(asynUser* device, u16 univ, u16* source);
+int evr230_enable_pdp(asynUser* device, u16 output, u16 enable);
+int evr230_is_pdp_enabled(asynUser* device, u16 output, u16* enabled);
+int evr230_set_pdp_delay(asynUser* device, u16 output, double  delay);
+int evr230_get_pdp_delay(asynUser* device, u16 output, double* delay);
 
 int evr230_read(asynUser* device, int address, u16* data);
 int evr230_write(asynUser* device, int address, u16 data);

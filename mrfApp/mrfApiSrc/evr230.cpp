@@ -317,3 +317,83 @@ int evr230_get_universal_source(asynUser* device, u16 univ, u16* source)
     return status;
 }
 
+int evr230_enable_pdp(asynUser* device, u16 output, u16 enable)
+{
+    u16 data;
+    int status;
+
+    status = evr230_read(device, EVR230_PDP_ENABLE, &data);
+    if(status == asynSuccess) {
+        if(enable) 
+            status = evr230_write(device, EVR230_PDP_ENABLE, data |  PDP(output));
+        else
+            status = evr230_write(device, EVR230_PDP_ENABLE, data & ~PDP(output));
+	}
+
+	return status;
+}
+
+int evr230_is_pdp_enabled(asynUser* device, u16 output, u16* enabled)
+{
+	u16 data;
+	int status;
+
+	status = evr230_read(device, EVR230_PDP_ENABLE, &data);
+	if(status == asynSuccess)
+		*enabled = (data & PDP(output)) == PDP(output);
+
+	return status;
+}
+
+int evr230_set_pdp_delay(asynUser* device, u16 output, double delay)
+{
+	int status;
+	u32 cycles;
+    u16 prescaler;
+
+    status = evr230_write(device, EVR230_PULSE_SELECT, output);
+	if(status != asynSuccess)
+		return -1;
+
+    status = evr230_read(device, EVR230_PDP_PRESCALER, &prescaler);
+    if (status != asynSuccess)
+        return -1;
+
+    cycles = delay * device_frequency / prescaler;
+    status = evr230_write(device, EVR230_PULSE_DELAY, cycles >> 16);
+    if(status != asynSuccess)
+        return -1;
+
+    status = evr230_write(device, EVR230_PULSE_DELAY + 2, (u16)(cycles & 0xFFFF));
+    return status;
+}
+
+int evr230_get_pdp_delay(asynUser* device, u16 output, double* delay)
+{
+	int status;
+	u16 data;
+    u16 prescaler;
+	u32 cycles;
+
+	status = evr230_write(device, EVR230_PULSE_SELECT, output);
+	if(status != asynSuccess)
+		return -1;
+
+    status = evr230_read(device, EVR230_PDP_PRESCALER, &prescaler);
+    if (status != asynSuccess)
+        return -1;
+	
+    status = evr230_read(device, EVR230_PULSE_DELAY, &data);
+	if(status != asynSuccess)
+		return -1;
+
+	cycles = data << 16;
+	status = evr230_read(device, EVR230_PULSE_DELAY + 2, &data);
+	if(status != asynSuccess)
+		return -1;
+
+	cycles |= data;
+	*delay = cycles * prescaler / (double) device_frequency;
+	return status;
+}
+
