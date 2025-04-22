@@ -530,3 +530,20 @@ int evr230_get_cml_prescaler(asynUser* device, u16 output, u16* prescaler)
     return status;
 }
 
+int evr230_set_prescaler(asynUser* device, u16 output, u16 prescaler)
+{
+    return evr230_write(device, EVR230_PRESCALER(output), prescaler);
+}
+
+int evr230_get_prescaler(asynUser* device, u16 output, u16* prescaler)
+{
+    int status;
+    u16 data;
+
+    status = evr230_read(device, EVR230_PRESCALER(output), &data);
+    if (status == asynSuccess)
+        *prescaler = data;
+
+    return status;
+}
+

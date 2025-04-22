@@ -33,6 +33,7 @@ using std::string;
 #define EVR230_CML_ENABLE(x)    (0xb2 + x*0x20)
 #define EVR230_CML_HP(x)        (0xb4 + x*0x20)
 #define EVR230_CML_LP(x)        (0xb6 + x*0x20)
+#define EVR230_PRESCALER(x)     (0x74 + x*2)
 
 // Control/Status Register
 // Address: 0x00
@@ -91,6 +92,8 @@ int evr230_enable_cml(asynUser* device, u16 output, u16 enable);
 int evr230_is_cml_enabled(asynUser* device, u16 output, u16* enabled);
 int evr230_set_cml_prescaler(asynUser* device, u16 output, u16  prescaler);
 int evr230_get_cml_prescaler(asynUser* device, u16 output, u16* prescaler);
+int evr230_set_prescaler(asynUser* device, u16 output, u16  prescaler);
+int evr230_get_prescaler(asynUser* device, u16 output, u16* prescaler);
 
 int evr230_read(asynUser* device, int address, u16* data);
 int evr230_write(asynUser* device, int address, u16 data);

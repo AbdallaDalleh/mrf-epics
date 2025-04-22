@@ -41,6 +41,7 @@ EVR230::EVR230(const char* port_name, const char* asyn_name, int frequency)
     createParam(EVR_PDP_Width,        asynParamFloat64,       &index_evr_pdp_width);
     createParam(EVR_CML_Enable,       asynParamUInt32Digital, &index_evr_cml_enable);
     createParam(EVR_CML_Prescaler,    asynParamInt32,         &index_evr_cml_prescaler);
+    createParam(EVR_Prescaler,        asynParamInt32,         &index_evr_prescaler);
 
     // enable event map, testing only ...
     evr230_write(device, 0x02,  1);
@@ -73,6 +74,8 @@ asynStatus EVR230::readInt32(asynUser* asyn_user, epicsInt32* value)
         status = evr230_get_pdp_prescaler(device, address, &data);
     else if(function == index_evr_cml_prescaler)
         status = evr230_get_cml_prescaler(device, address, &data);
+    else if(function == index_evr_prescaler)
+        status = evr230_get_prescaler(device, address, &data);
 	else if(function == index_evr_reset_rx || function == index_evr_connect)
 		return asynSuccess;
 	else {
@@ -114,6 +117,8 @@ asynStatus EVR230::writeInt32(asynUser* asyn_user, epicsInt32 value)
         status = evr230_set_pdp_prescaler(device, address, value);
     else if (function == index_evr_cml_prescaler)
         status = evr230_set_cml_prescaler(device, address, value);
+    else if (function == index_evr_prescaler)
+        status = evr230_set_prescaler(device, address, value);
 	else {
 		printf("writeInt32: Unknown function %d \n", function);
 		return asynError;
