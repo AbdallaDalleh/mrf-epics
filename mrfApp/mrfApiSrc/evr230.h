@@ -13,8 +13,11 @@ using std::string;
 #include <asynOctetSyncIO.h>
 #include "types.h"
 
-#define BASE_ADDRESS      0x7A000000
-#define OTP_SELECT_OFFSET 16
+#define BASE_ADDRESS        0x7A000000
+#define OTP_SELECT_OFFSET   16
+#define CML_FREQUENCY_MODE  0x0010
+#define CML_ENABLE			0x0001
+#define CML_DISABLE         0x0002
 
 #define EVR230_CONTROL           0x00
 #define EVR230_OTP_ENABLE        0x06
@@ -27,6 +30,9 @@ using std::string;
 #define EVR230_PULSE_WIDTH       0x70
 #define EVR230_FP_TTL(x)        (0x40 + x*2)
 #define EVR230_FP_UNIV(x)       (0x90 + x*2)
+#define EVR230_CML_ENABLE(x)    (0xb2 + x*0x20)
+#define EVR230_CML_HP(x)        (0xb4 + x*0x20)
+#define EVR230_CML_LP(x)        (0xb6 + x*0x20)
 
 // Control/Status Register
 // Address: 0x00
@@ -81,6 +87,10 @@ int evr230_set_pdp_prescaler(asynUser* device, u16 output, u16  prescaler);
 int evr230_get_pdp_prescaler(asynUser* device, u16 output, u16* prescaler);
 int evr230_set_pdp_width(asynUser* device, u16 output, double  width);
 int evr230_get_pdp_width(asynUser* device, u16 output, double* width);
+int evr230_enable_cml(asynUser* device, u16 output, u16 enable);
+int evr230_is_cml_enabled(asynUser* device, u16 output, u16* enabled);
+int evr230_set_cml_prescaler(asynUser* device, u16 output, u16  prescaler);
+int evr230_get_cml_prescaler(asynUser* device, u16 output, u16* prescaler);
 
 int evr230_read(asynUser* device, int address, u16* data);
 int evr230_write(asynUser* device, int address, u16 data);

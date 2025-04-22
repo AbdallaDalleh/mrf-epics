@@ -480,3 +480,53 @@ int evr230_get_pdp_width(asynUser* device, u16 output, double* width)
     *width = cycles * prescaler / (double) device_frequency;
     return status;
 }
+
+int evr230_enable_cml(asynUser* device, u16 output, u16 enable)
+{
+    u16 value;
+
+    value = CML_FREQUENCY_MODE + (enable ? CML_ENABLE : CML_DISABLE);
+    return evr230_write(device, EVR230_CML_ENABLE(output), value);
+}
+
+int evr230_is_cml_enabled(asynUser* device, u16 output, u16* enabled)
+{
+    int status;
+    u16 data;
+
+    status = evr230_read(device, EVR230_CML_ENABLE(output), &data);
+    if (status == asynSuccess)
+        *enabled = data & CML_ENABLE;
+
+    return status;
+}
+
+int evr230_set_cml_prescaler(asynUser* device, u16 output, u16 prescaler)
+{
+    int status;
+
+    status = evr230_write(device, EVR230_CML_HP(output), prescaler / 2);
+    if (status != asynSuccess)
+        return -1;
+
+    return evr230_write(device, EVR230_CML_HP(output), prescaler - (prescaler / 2));
+}
+
+int evr230_get_cml_prescaler(asynUser* device, u16 output, u16* prescaler)
+{
+    int status;
+    u16 data;
+
+    status = evr230_read(device, EVR230_CML_HP(output), &data);
+    if (status != asynSuccess)
+        return status;
+
+    *prescaler = data;
+    status = evr230_read(device, EVR230_CML_HP(output), &data);
+    if (status != asynSuccess)
+        return status;
+
+    *prescaler += data;
+    return status;
+}
+

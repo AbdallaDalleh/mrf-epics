@@ -39,11 +39,17 @@ EVR230::EVR230(const char* port_name, const char* asyn_name, int frequency)
     createParam(EVR_PDP_Prescaler,    asynParamInt32,         &index_evr_pdp_prescaler);
     createParam(EVR_PDP_Delay,        asynParamFloat64,       &index_evr_pdp_delay);
     createParam(EVR_PDP_Width,        asynParamFloat64,       &index_evr_pdp_width);
+    createParam(EVR_CML_Enable,       asynParamUInt32Digital, &index_evr_cml_enable);
+    createParam(EVR_CML_Prescaler,    asynParamInt32,         &index_evr_cml_prescaler);
 
     // enable event map, testing only ...
     evr230_write(device, 0x02,  1);
     evr230_write(device, 0x04, 0x3FFF);
     evr230_write(device, 0x42, 0x0F);
+
+    u16 data;
+    evr230_read(device, 0xb2, &data);
+    printf("CML: 0x%X\n", data);
 }
 
 asynStatus EVR230::readInt32(asynUser* asyn_user, epicsInt32* value)
@@ -65,6 +71,8 @@ asynStatus EVR230::readInt32(asynUser* asyn_user, epicsInt32* value)
         status = evr230_get_universal_source(device, address, &data);
     else if(function == index_evr_pdp_prescaler)
         status = evr230_get_pdp_prescaler(device, address, &data);
+    else if(function == index_evr_cml_prescaler)
+        status = evr230_get_cml_prescaler(device, address, &data);
 	else if(function == index_evr_reset_rx || function == index_evr_connect)
 		return asynSuccess;
 	else {
@@ -104,6 +112,8 @@ asynStatus EVR230::writeInt32(asynUser* asyn_user, epicsInt32 value)
         status = evr230_set_universal_source(device, address, value);
     else if (function == index_evr_pdp_prescaler)
         status = evr230_set_pdp_prescaler(device, address, value);
+    else if (function == index_evr_cml_prescaler)
+        status = evr230_set_cml_prescaler(device, address, value);
 	else {
 		printf("writeInt32: Unknown function %d \n", function);
 		return asynError;
@@ -130,6 +140,8 @@ asynStatus EVR230::readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, ep
 		status = evr230_is_otp_enabled(device, address, &data);
     else if(function == index_evr_pdp_enable)
         status = evr230_is_pdp_enabled(device, address, &data);
+    else if(function == index_evr_cml_enable)
+        status = evr230_is_cml_enabled(device, address, &data);
 	else {
 		printf("readUInt32Digital: Unknown function: %d\n", function);
 		return asynError;
@@ -158,6 +170,8 @@ asynStatus EVR230::writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, ep
 		status = evr230_enable_otp(device, address, value);
     else if(function == index_evr_pdp_enable)
         status = evr230_enable_pdp(device, address, value);
+    else if(function == index_evr_cml_enable)
+        status = evr230_enable_cml(device, address, value);
 	else {
 		printf("writeUInt32Digital: Unknown function: %d\n", function);
 		return asynError;

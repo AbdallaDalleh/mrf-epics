@@ -67,6 +67,8 @@ protected:
     int index_evr_pdp_prescaler;
     int index_evr_pdp_delay;
     int index_evr_pdp_width;
+    int index_evr_cml_enable;
+    int index_evr_cml_prescaler;
 
 private:
 	asynUser* device;
