@@ -63,6 +63,10 @@ protected:
 	int index_evr_connect;
     int index_evr_ttl_source;
     int index_evr_univ_source;
+    int index_evr_pdp_enable;
+    int index_evr_pdp_prescaler;
+    int index_evr_pdp_delay;
+    int index_evr_pdp_width;
 
 private:
 	asynUser* device;

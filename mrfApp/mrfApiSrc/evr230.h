@@ -77,6 +77,10 @@ int evr230_enable_pdp(asynUser* device, u16 output, u16 enable);
 int evr230_is_pdp_enabled(asynUser* device, u16 output, u16* enabled);
 int evr230_set_pdp_delay(asynUser* device, u16 output, double  delay);
 int evr230_get_pdp_delay(asynUser* device, u16 output, double* delay);
+int evr230_set_pdp_prescaler(asynUser* device, u16 output, u16  prescaler);
+int evr230_get_pdp_prescaler(asynUser* device, u16 output, u16* prescaler);
+int evr230_set_pdp_width(asynUser* device, u16 output, double  width);
+int evr230_get_pdp_width(asynUser* device, u16 output, double* width);
 
 int evr230_read(asynUser* device, int address, u16* data);
 int evr230_write(asynUser* device, int address, u16 data);

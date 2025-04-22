@@ -382,7 +382,7 @@ int evr230_get_pdp_delay(asynUser* device, u16 output, double* delay)
     status = evr230_read(device, EVR230_PDP_PRESCALER, &prescaler);
     if (status != asynSuccess)
         return -1;
-	
+
     status = evr230_read(device, EVR230_PULSE_DELAY, &data);
 	if(status != asynSuccess)
 		return -1;
@@ -397,3 +397,86 @@ int evr230_get_pdp_delay(asynUser* device, u16 output, double* delay)
 	return status;
 }
 
+int evr230_set_pdp_prescaler(asynUser* device, u16 output, u16 prescaler)
+{
+    int status;
+
+    status = evr230_write(device, EVR230_PULSE_SELECT, output);
+    if(status != asynSuccess)
+        return -1;
+
+    status = evr230_write(device, EVR230_PDP_PRESCALER, prescaler);
+    if (status != asynSuccess)
+        return -1;
+
+    return status;
+}
+
+int evr230_get_pdp_prescaler(asynUser* device, u16 output, u16* prescaler)
+{
+    int status;
+    u16 data;
+
+    status = evr230_write(device, EVR230_PULSE_SELECT, output);
+    if(status != asynSuccess)
+        return -1;
+
+    status = evr230_read(device, EVR230_PDP_PRESCALER, &data);
+    if (status != asynSuccess)
+        return -1;
+
+    *prescaler = data;
+    return status;
+}
+
+int evr230_set_pdp_width(asynUser* device, u16 output, double width)
+{
+    int status;
+    u32 cycles;
+    u16 prescaler;
+
+    status = evr230_write(device, EVR230_PULSE_SELECT, output);
+    if(status != asynSuccess)
+        return -1;
+
+    status = evr230_read(device, EVR230_PDP_PRESCALER, &prescaler);
+    if (status != asynSuccess)
+        return -1;
+
+    cycles = width * device_frequency / prescaler;
+    status = evr230_write(device, EVR230_PULSE_WIDTH, cycles >> 16);
+    if(status != asynSuccess)
+        return -1;
+
+    status = evr230_write(device, EVR230_PULSE_WIDTH + 2, (u16)(cycles & 0xFFFF));
+    return status;
+}
+
+int evr230_get_pdp_width(asynUser* device, u16 output, double* width)
+{
+    int status;
+    u16 data;
+    u16 prescaler;
+    u32 cycles;
+
+    status = evr230_write(device, EVR230_PULSE_SELECT, output);
+    if(status != asynSuccess)
+        return -1;
+
+    status = evr230_read(device, EVR230_PDP_PRESCALER, &prescaler);
+    if (status != asynSuccess)
+        return -1;
+
+    status = evr230_read(device, EVR230_PULSE_WIDTH, &data);
+    if(status != asynSuccess)
+        return -1;
+
+    cycles = data << 16;
+    status = evr230_read(device, EVR230_PULSE_WIDTH + 2, &data);
+    if(status != asynSuccess)
+        return -1;
+
+    cycles |= data;
+    *width = cycles * prescaler / (double) device_frequency;
+    return status;
+}

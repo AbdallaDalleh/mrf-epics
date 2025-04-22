@@ -35,6 +35,10 @@ EVR230::EVR230(const char* port_name, const char* asyn_name, int frequency)
 	createParam(EVR_Connect,          asynParamInt32,         &index_evr_connect);
     createParam("EVR_TTL_Source",     asynParamInt32,         &index_evr_ttl_source);
     createParam(EVR_Universal_Source, asynParamInt32,         &index_evr_univ_source);
+    createParam(EVR_PDP_Enable,       asynParamUInt32Digital, &index_evr_pdp_enable);
+    createParam(EVR_PDP_Prescaler,    asynParamInt32,         &index_evr_pdp_prescaler);
+    createParam(EVR_PDP_Delay,        asynParamFloat64,       &index_evr_pdp_delay);
+    createParam(EVR_PDP_Width,        asynParamFloat64,       &index_evr_pdp_width);
 
     // enable event map, testing only ...
     evr230_write(device, 0x02,  1);
@@ -59,6 +63,8 @@ asynStatus EVR230::readInt32(asynUser* asyn_user, epicsInt32* value)
         status = evr230_get_ttl_source(device, address, &data);
     else if(function == index_evr_univ_source)
         status = evr230_get_universal_source(device, address, &data);
+    else if(function == index_evr_pdp_prescaler)
+        status = evr230_get_pdp_prescaler(device, address, &data);
 	else if(function == index_evr_reset_rx || function == index_evr_connect)
 		return asynSuccess;
 	else {
@@ -96,6 +102,8 @@ asynStatus EVR230::writeInt32(asynUser* asyn_user, epicsInt32 value)
         status = evr230_set_ttl_source(device, address, (u16) value);
     else if (function == index_evr_univ_source)
         status = evr230_set_universal_source(device, address, value);
+    else if (function == index_evr_pdp_prescaler)
+        status = evr230_set_pdp_prescaler(device, address, value);
 	else {
 		printf("writeInt32: Unknown function %d \n", function);
 		return asynError;
@@ -120,6 +128,8 @@ asynStatus EVR230::readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, ep
 	}
 	else if(function == index_evr_otp_enable)
 		status = evr230_is_otp_enabled(device, address, &data);
+    else if(function == index_evr_pdp_enable)
+        status = evr230_is_pdp_enabled(device, address, &data);
 	else {
 		printf("readUInt32Digital: Unknown function: %d\n", function);
 		return asynError;
@@ -146,6 +156,8 @@ asynStatus EVR230::writeUInt32Digital(asynUser* asyn_user, epicsUInt32 value, ep
 		status = evr230_enable(device, value);
 	else if(function == index_evr_otp_enable)
 		status = evr230_enable_otp(device, address, value);
+    else if(function == index_evr_pdp_enable)
+        status = evr230_enable_pdp(device, address, value);
 	else {
 		printf("writeUInt32Digital: Unknown function: %d\n", function);
 		return asynError;
@@ -167,6 +179,10 @@ asynStatus EVR230::readFloat64(asynUser* asyn_user, epicsFloat64* value)
 		status = evr230_get_otp_delay(device, address, &data);
 	else if(function == index_evr_otp_width)
 		status = evr230_get_otp_width(device, address, &data);
+    else if(function == index_evr_pdp_delay)
+		status = evr230_get_pdp_delay(device, address, &data);
+	else if(function == index_evr_pdp_width)
+		status = evr230_get_pdp_width(device, address, &data);
 	else {
 		printf("readFloat64: Unknown function %d\n", function);
 		return asynError;
@@ -193,6 +209,10 @@ asynStatus EVR230::writeFloat64(asynUser* asyn_user, epicsFloat64 value)
 		status = evr230_set_otp_delay(device, address, value);
 	else if(function == index_evr_otp_width)
 		status = evr230_set_otp_width(device, address, value);
+    else if(function == index_evr_pdp_delay)
+		status = evr230_set_pdp_delay(device, address, value);
+	else if(function == index_evr_pdp_width)
+		status = evr230_set_pdp_width(device, address, value);
 	else {
 		printf("writeFloat64: Unknown function %d\n", function);
 		return asynError;
