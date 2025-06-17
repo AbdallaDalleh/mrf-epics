@@ -1,7 +1,10 @@
 .vscode/
+bin/
 lib/
+db/
 dbd/
 include/
 O.Common/
 O.linux-x86/
 O.linux-x86_64/
+mrf-*
