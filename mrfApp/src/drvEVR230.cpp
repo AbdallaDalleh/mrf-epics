@@ -44,13 +44,29 @@ EVR230::EVR230(const char* port_name, const char* asyn_name, int frequency)
     createParam(EVR_Prescaler,        asynParamInt32,         &index_evr_prescaler);
 
     // enable event map, testing only ...
-    evr230_write(device, 0x02,  1);
-    evr230_write(device, 0x04, 0x3FFF);
-    evr230_write(device, 0x42, 0x0F);
+    if (std::string(port_name) == "EVR0") {
+        evr230_write(device, 0x02,  1);
+        evr230_write(device, 0x04, 0x7FFF);
+    }
+    else if (std::string(port_name) == "EVR1") {
+        evr230_write(device, 0x02,  1);
+        evr230_write(device, 0x04, 0x1FFF);
+        
+        evr230_write(device, 0x02,  2);
+        evr230_write(device, 0x04, 0x2000);
+    }
+    else {
+        std::cout << "Unknown device, but continue :-)" << std::endl;
+    }
 
-    u16 data;
-    evr230_read(device, 0xb2, &data);
-    printf("CML: 0x%X\n", data);
+	std::string maps_dir;
+	char* dir = getenv("EVR_MAPS");
+	if (dir)
+		maps_dir = dir;
+	else
+		maps_dir = "./maps";
+
+	std::cout << "EVR Maps location: " << maps_dir << std::endl;
 }
 
 asynStatus EVR230::readInt32(asynUser* asyn_user, epicsInt32* value)
@@ -238,7 +254,7 @@ asynStatus EVR230::writeFloat64(asynUser* asyn_user, epicsFloat64 value)
 	}
 
 	if(status != asynSuccess)
-		printf("writeFloat64: I/O error\n");
+		printf("writeFloat64: I/O error / %d\n", status);
 
 	return (asynStatus) status;
 }

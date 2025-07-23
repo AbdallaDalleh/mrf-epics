@@ -8,3 +8,5 @@ O.Common/
 O.linux-x86/
 O.linux-x86_64/
 mrf-*
+st.cmd
+!iocBoot/ioc/st.cmd
