@@ -1,0 +1,42 @@
+#
+record(longin, "$(PREFIX)-SEQ$(SEQ):getEvent$(EVENT)")
+{
+	field(PINI, "YES")
+	# field(SCAN, "1 second")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn(EVG $(EVENT)) EVG_SEQ$(SEQ)_Event")
+}
+
+record(longout, "$(PREFIX)-SEQ$(SEQ):setEvent$(EVENT)")
+{
+	field(PINI, "YES")
+	field(VAL,  "$(CODE)")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(EVG $(EVENT)) EVG_SEQ$(SEQ)_Event")
+	field(FLNK, "$(PREFIX)-SEQ$(SEQ):getEvent$(EVENT)")
+}
+
+record(longin, "$(PREFIX)-SEQ$(SEQ):getTimestamp$(EVENT)")
+{
+	field(PINI, "YES")
+	# field(SCAN, "1 second")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn(EVG $(EVENT)) EVG_SEQ$(SEQ)_Event_Time")
+}
+
+record(longout, "$(PREFIX)-SEQ$(SEQ):setTimestamp$(EVENT)")
+{
+	field(PINI, "YES")
+	field(VAL,  "$(TIMESTAMP)")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(EVG $(EVENT)) EVG_SEQ$(SEQ)_Event_Time")
+	field(FLNK, "$(PREFIX)-SEQ$(SEQ):getTimestamp$(EVENT)")
+}
+
+record(stringout, "$(PREFIX)-SEQ$(SEQ):getEvent$(EVENT)Name")
+{
+	field(DESC, "Gets the event name")
+	field(VAL, 	"$(NAME)")
+	field(PINI, "YES")
+}
+

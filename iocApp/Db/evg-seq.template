@@ -1,0 +1,67 @@
+record(bo, "$(PREFIX)-SEQ$(SEQ):enable")
+{
+	field(PINI, "YES")
+	field(VAL,  "$(ENABLE)")
+	field(DTYP, "asynUInt32Digital")
+	field(OUT,  "@asynMask(EVG $(SEQ) 0x1) EVG_SEQ_Enabled")
+	field(ZNAM, "Disabled")
+	field(ONAM, "Enabled")
+	field(FLNK, "$(PREFIX)-SEQ$(SEQ):isEnabled")
+}
+
+record(bi, "$(PREFIX)-SEQ$(SEQ):isEnabled")
+{
+	field(PINI, "YES")
+	field(SCAN, "1 second")
+	field(DTYP, "asynUInt32Digital")
+	field(INP,  "@asynMask(EVG $(SEQ) 0x1) EVG_SEQ_Enabled")
+	field(ZNAM, "Disabled")
+	field(ONAM, "Enabled")
+}
+
+record(longout, "$(PREFIX)-SEQ$(SEQ):setPrescaler")
+{
+	field(PINI, "YES")
+	field(VAL,  "$(PRESCALER)")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(EVG $(SEQ)) EVG_SEQ_Prescaler")
+	field(FLNK, "$(PREFIX)-SEQ$(SEQ):getPrescaler")
+}
+
+record(longin, "$(PREFIX)-SEQ$(SEQ):getPrescaler")
+{
+	field(PINI, "YES")
+	# field(SCAN, "1 second")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn(EVG $(SEQ)) EVG_SEQ_Prescaler")
+}
+
+record(mbbo, "$(PREFIX)-SEQ$(SEQ):setTriggerSource")
+{
+	field(PINI, "YES")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(EVG $(SEQ)) EVG_SEQ_Trigger_Source")
+	field(ZRVL, "0") field(ZRST, "Soft")
+	field(ONVL, "1") field(ONST, "AC")
+	field(FLNK, "$(PREFIX)-SEQ$(SEQ):getTriggerSource")
+}
+
+record(mbbi, "$(PREFIX)-SEQ$(SEQ):getTriggerSource")
+{
+	field(PINI, "YES")
+	# field(SCAN, "1 second")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn(EVG $(SEQ)) EVG_SEQ_Trigger_Source")
+	field(ZRVL, "0") field(ZRST, "Soft")
+	field(ONVL, "1") field(ONST, "AC")
+}
+
+record(bo, "$(PREFIX)-SEQ$(SEQ):trigger")
+{
+	field(PINI, "YES")
+	field(DTYP, "asynUInt32Digital")
+	field(OUT,  "@asynMask(EVG $(SEQ) 0x1) EVG_SEQ_Trigger")
+	field(ZNAM, "")
+	field(ONAM, "Triggering")
+}
+

@@ -1,0 +1,117 @@
+record(longin, "$(PREFIX):getVersion")
+{
+	field(PINI, "YES")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn(EVG 1) EVG_Firmware_Version")
+}
+
+record(longout, "$(PREFIX):connect")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(EVG 1) EVG_Connect")
+}
+
+record(bo, "$(PREFIX):enable")
+{
+	field(PINI, "YES")
+	field(VAL,  "1")
+	field(DTYP, "asynUInt32Digital")
+	field(OUT,  "@asynMask(EVG 1 0x1) EVG_Enable")
+	field(ZNAM, "Disable") field(ZSV, "MINOR")
+	field(ONAM, "Enable")  field(OSV, "NO_ALARM")
+	field(FLNK, "$(PREFIX):isEnabled")
+}
+
+record(bi, "$(PREFIX):isEnabled")
+{
+	field(PINI, "YES")
+	field(SCAN, "1 second")
+	field(DTYP, "asynUInt32Digital")
+	field(INP,  "@asynMask(EVG 1 0x1) EVG_Enable")
+	field(ZNAM, "Disabled") field(ZSV, "MINOR")
+	field(ONAM, "Enabled")  field(OSV, "NO_ALARM")
+}
+
+record(longin, "$(PREFIX):getClock")
+{
+	field(PINI, "YES")
+	field(SCAN, "1 second")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn(EVG 1) EVG_Clock")
+}
+
+record(mbbi, "$(PREFIX):getRfClockSource")
+{
+	field(PINI, "YES")
+	# field(SCAN, "1 second")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn(EVG 1) EVG_RF_Source")
+	field(ZRVL, "0") field(ZRST, "Internal")
+	field(ONVL, "1") field(ONST, "External")
+}
+
+record(mbbo, "$(PREFIX):setRfClockSource")
+{
+	field(PINI, "YES")
+	field(DTYP, "asynInt32")
+	# field(RVAL, "$(RFSOURCE)")
+	field(OUT,  "@asyn(EVG 1) EVG_RF_Source")
+	field(ZRVL, "0") field(ZRST, "Internal")
+	field(ONVL, "1") field(ONST, "External")
+	field(FLNK, "$(PREFIX):getRfClockSource")
+}
+
+record(mbbi, "$(PREFIX):getAcSyncSource")
+{
+	field(PINI, "YES")
+	# field(SCAN, "1 second")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn(EVG 1) EVG_AC_Sync_Source")
+	field(ZRVL, "0") field(ZRST, "Event")
+	field(ONVL, "1") field(ONST, "MXC7")
+}
+
+record(mbbo, "$(PREFIX):setAcSyncSource")
+{
+	field(PINI, "YES")
+	# field(RVAL, "$(ACSYNC)")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(EVG 1) EVG_AC_Sync_Source")
+	field(ZRVL, "0") field(ZRST, "Event")
+	field(ONVL, "1") field(ONST, "MXC7")
+	field(FLNK, "$(PREFIX):getAcSyncSource")
+}
+
+record(longin, "$(PREFIX):getRfPrescaler")
+{
+	field(PINI, "YES")
+	# field(SCAN, "1 second")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn(EVG 1) EVG_RF_Prescaler")
+}
+
+record(longout, "$(PREFIX):setRfPrescaler")
+{
+	field(PINI, "YES")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(EVG 1) EVG_RF_Prescaler")
+	field(FLNK, "$(PREFIX):getRfPrescaler")
+}
+
+record(longin, "$(PREFIX):getAcPrescaler")
+{
+	field(PINI, "YES")
+	# field(SCAN, "1 second")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn(EVG 1) EVG_AC_Prescaler")
+}
+
+record(longout, "$(PREFIX):setAcPrescaler")
+{
+	field(PINI, "YES")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(EVG 1) EVG_AC_Prescaler")
+	field(FLNK, "$(PREFIX):getAcPrescaler")
+}
+

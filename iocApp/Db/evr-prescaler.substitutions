@@ -1,0 +1,8 @@
+pattern	{	NAME		DEVICE	PRESCALER	VALUE	}
+		{	BO-CLK		EVR0	0			16		}
+		{	Vacant		EVR0	1			16		}
+		{	vacant		EVR0	2			16		}
+
+		{	Vacant		EVR1	0			16		}
+		{	Vacant		EVR1	1			16		}
+		{	Vacant		EVR1	2			16		}

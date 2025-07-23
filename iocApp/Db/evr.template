@@ -1,0 +1,65 @@
+#
+#
+#
+
+record(longout, "GBL-TI-$(DEVICE):connect")
+{
+	field(PINI, "NO")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(DEVICE) 1) EVR_Connect")
+}
+
+record(bo, "GBL-TI-$(DEVICE):enable")
+{
+	field(PINI, "YES")
+	field(VAL,  "1")
+	field(DTYP, "asynUInt32Digital")
+	field(OUT,  "@asynMask($(DEVICE) 1 0x1) EVR_Enable")
+	field(ZNAM, "Disable") field(ZSV, "MINOR")
+	field(ONAM, "Enable")  field(OSV, "NO_ALARM")
+	field(FLNK, "GBL-TI-$(DEVICE):isEnabled")
+}
+
+record(bi, "GBL-TI-$(DEVICE):isEnabled")
+{
+	field(PINI, "YES")
+	field(SCAN, "1 second")
+	field(DESC, "Returns if the event receiver is enabled")
+	field(DTYP, "asynUInt32Digital")
+	field(INP,  "@asynMask($(DEVICE) 1 0x1) EVR_Enable")
+	field(ZNAM, "Disabled")	field(ZSV, "MAJOR")
+	field(ONAM, "Enabled")	field(OSV, "NO_ALARM")
+}
+
+record(longout, "GBL-TI-$(DEVICE):resetRxViolation")
+{
+	field(DESC, "Clear RX violation flag.")
+	field(DTYP, "asynInt32")
+	field(OUT,	"@asyn($(DEVICE) 1) EVR_Reset_RX")
+}
+
+record(bi, "GBL-TI-$(DEVICE):isRxViolation")
+{
+	field(DESC, "Checks Rx violation.")
+	field(SCAN, "1 second")
+	field(DTYP, "asynUInt32Digital")
+	field(INP,	"@asynMask($(DEVICE) 1 0x1) EVR_RX_Violation")
+	field(ZNAM, "OK")			field(ZSV, "NO_ALARM")
+	field(ONAM, "Violation")	field(OSV, "MAJOR")
+}
+
+record(longin, "GBL-TI-$(DEVICE):getClock")
+{
+	field(DESC, "Returns clock divisor.")
+	field(DTYP, "asynInt32")
+	field(INP,	"@asyn($(DEVICE) 1) EVR_Clock")
+	field(PINI,	"YES")
+}
+
+record(longin, "GBL-TI-$(DEVICE):getFirmwareVersion")
+{
+	field(DESC, "Returns firmware version.")
+	field(DTYP, "asynInt32")
+	field(INP,	"@asyn($(DEVICE) 1) EVR_Firmware_Version")
+	field(PINI,	"YES")
+}

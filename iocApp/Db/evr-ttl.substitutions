@@ -1,0 +1,10 @@
+pattern	{	NAME	DEVICE	TTL	SOURCE	}
+		{	DI-OSC	EVR0	0	11		}
+		{	TI-OSC	EVR0	1	12		}
+		{	TTL2	EVR0	2	13		}
+		{	TTL3	EVR0	3	14		}
+
+		{	DI-OSC	EVR1	0	11		}
+		{	TTL1	EVR1	1	12		}
+		{	TTL2	EVR1	2	13		}
+		{	TTL3	EVR1	3	14		}

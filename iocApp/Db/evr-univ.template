@@ -1,0 +1,64 @@
+#
+#
+#
+
+record(stringout, "GBL-TI-$(DEVICE)-UNIV$(UNIV):getName")
+{
+	field(DESC, "Gets the name of the UNIV output.")
+	field(VAL, 	"$(NAME)")
+	field(PINI, "YES")
+}
+
+record(mbbo, "GBL-TI-$(DEVICE)-UNIV$(UNIV):setSource")
+{
+	field(DESC, "Selects UNIV source.")
+	field(DTYP, "asynInt32")
+	field(OUT,	"@asyn($(DEVICE) $(UNIV)) EVR_Universal_Source")
+	field(RVAL,	"$(SOURCE)")
+	field(PINI,	"YES")
+	field(FLNK, "GBL-TI-$(DEVICE)-UNIV$(UNIV):getSource")
+
+    field(ZRVL, "11")	field(ZRST, "OTP0")	field(ZRSV, "NO_ALARM")
+    field(ONVL, "12")	field(ONST, "OTP1") field(ONSV, "NO_ALARM")
+    field(TWVL, "13")	field(TWST, "OTP2") field(TWSV, "NO_ALARM")
+    field(THVL, "14")	field(THST, "OTP3") field(THSV, "NO_ALARM")
+    field(FRVL, "15")	field(FRST, "OTP4") field(FRSV, "NO_ALARM")
+    field(FVVL, "16")	field(FVST, "OTP5") field(FVSV, "NO_ALARM")
+    field(SXVL, "17")	field(SXST, "OTP6") field(SXSV, "NO_ALARM")
+    field(SVVL, "18")	field(SVST, "OTP7") field(SVSV, "NO_ALARM")
+    field(EIVL, "19")	field(EIST, "OTP8") field(EISV, "NO_ALARM")
+    field(NIVL, "20")	field(NIST, "OTP9") field(NISV, "NO_ALARM")
+    field(TEVL, "21")	field(TEST, "OTP10")field(TESV, "NO_ALARM")
+    field(ELVL, "22")	field(ELST, "OTP11")field(ELSV, "NO_ALARM")
+    field(TVVL, "40")	field(TVST, "PRE0") field(TVSV, "NO_ALARM")
+    field(TTVL, "0")	field(TTST, "PDP0") field(TTSV, "NO_ALARM")
+    field(FTVL, "1")	field(FTST, "PDP1") field(FTSV, "NO_ALARM")
+    field(FFVL, "2")	field(FFST, "PDP2") field(FFSV, "NO_ALARM")
+    field(UNSV, "MAJOR")
+}
+
+record(mbbi, "GBL-TI-$(DEVICE)-UNIV$(UNIV):getSource")
+{
+	field(DESC, "Reads mux source.")
+	field(DTYP, "asynInt32")
+	field(INP,	"@asyn($(DEVICE) $(UNIV)) EVR_Universal_Source")
+
+    field(ZRVL, "11")	field(ZRST, "OTP0")	field(ZRSV, "NO_ALARM")
+    field(ONVL, "12")	field(ONST, "OTP1") field(ONSV, "NO_ALARM")
+    field(TWVL, "13")	field(TWST, "OTP2") field(TWSV, "NO_ALARM")
+    field(THVL, "14")	field(THST, "OTP3") field(THSV, "NO_ALARM")
+    field(FRVL, "15")	field(FRST, "OTP4") field(FRSV, "NO_ALARM")
+    field(FVVL, "16")	field(FVST, "OTP5") field(FVSV, "NO_ALARM")
+    field(SXVL, "17")	field(SXST, "OTP6") field(SXSV, "NO_ALARM")
+    field(SVVL, "18")	field(SVST, "OTP7") field(SVSV, "NO_ALARM")
+    field(EIVL, "19")	field(EIST, "OTP8") field(EISV, "NO_ALARM")
+    field(EIVL, "19")   field(EIST, "OTP8") field(EISV, "NO_ALARM")
+    field(NIVL, "20")   field(NIST, "OTP9") field(NISV, "NO_ALARM")
+    field(TEVL, "21")   field(TEST, "OTP10")field(TESV, "NO_ALARM")
+    field(ELVL, "22")   field(ELST, "OTP11")field(ELSV, "NO_ALARM")
+    field(TVVL, "40")   field(TVST, "PRE0") field(TVSV, "NO_ALARM")
+    field(TTVL, "0")    field(TTST, "PDP0") field(TTSV, "NO_ALARM")
+    field(FTVL, "1")    field(FTST, "PDP1") field(FTSV, "NO_ALARM")
+    field(FFVL, "2")    field(FFST, "PDP2") field(FFSV, "NO_ALARM")
+    field(UNSV, "MAJOR")
+}

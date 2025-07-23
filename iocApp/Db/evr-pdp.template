@@ -1,0 +1,90 @@
+#
+#
+#
+
+record(stringout, "GBL-TI-$(DEVICE)-PDP$(PDP):getName")
+{
+	field(DESC, "Gets the name of the pdp device")
+	field(VAL, 	"$(NAME)")
+	field(PINI, "YES")
+}
+
+record(bo, "GBL-TI-$(DEVICE)-PDP$(PDP):enable")
+{
+	field(DESC, "Enables the pdp")
+	field(DTYP, "asynUInt32Digital")
+	field(OUT,  "@asynMask($(DEVICE) $(PDP) 0x1) EVR_PDP_Enable")
+	field(RVAL,	"$(ENABLE)")
+	field(PINI,	"YES")
+	field(ZNAM, "Disable") field(ZSV, "MINOR")
+	field(ONAM, "Enable") field(OSV, "NO_ALARM")
+	field(FLNK, "GBL-TI-$(DEVICE)-PDP$(PDP):isEnabled")
+}
+
+record(bi, "GBL-TI-$(DEVICE)-PDP$(PDP):isEnabled")
+{
+	field(DESC, "Checks enable status.")
+	field(DTYP, "asynUInt32Digital")
+	field(INP,  "@asynMask($(DEVICE) $(PDP) 0x1) EVR_PDP_Enable")
+	field(ZNAM, "Disable") field(ZSV, "NO_ALARM")
+	field(ONAM, "Enable") field(OSV, "NO_ALARM")
+}
+
+record(longout, "GBL-TI-$(DEVICE)-PDP$(PDP):setPrescaler")
+{
+	field(DESC, "Sets the pdp prescaler")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn($(DEVICE) $(PDP)) EVR_PDP_Prescaler")
+	field(VAL,	"$(PRESCALE)")
+	field(PINI,	"YES")
+	field(FLNK, "GBL-TI-$(DEVICE)-PDP$(PDP):getPrescaler")
+}
+
+record(longin, "GBL-TI-$(DEVICE)-PDP$(PDP):getPrescaler")
+{
+	field(DESC, "Gets the pdp prescaler")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(DEVICE) $(PDP)) EVR_PDP_Prescaler")
+}
+
+record(ao, "GBL-TI-$(DEVICE)-PDP$(PDP):setDelay")
+{
+	field(DESC, "Sets the pdp delay")
+	field(DTYP, "asynFloat64")
+	field(OUT,  "@asyn($(DEVICE) $(PDP)) EVR_PDP_Delay")
+	field(RVAL,	"$(DELAY)")
+	field(PINI,	"YES")
+	field(PREC,	"3")
+	field(EGU,	"us")
+	field(FLNK, "GBL-TI-$(DEVICE)-PDP$(PDP):getDelay")
+}
+
+record(ai, "GBL-TI-$(DEVICE)-PDP$(PDP):getDelay")
+{
+	field(DESC, "Gets the pdp delay")
+	field(DTYP, "asynFloat64")
+	field(INP,  "@asyn($(DEVICE) $(PDP)) EVR_PDP_Delay")
+	field(PREC,	"3")
+	field(EGU,	"us")
+}
+
+record(ao, "GBL-TI-$(DEVICE)-PDP$(PDP):setWidth")
+{
+	field(DESC, "Sets the pdp pulse width")
+	field(DTYP, "asynFloat64")
+	field(OUT,  "@asyn($(DEVICE) $(PDP)) EVR_PDP_Width")
+	field(RVAL,	"$(WIDTH)")
+	field(PINI,	"YES")
+	field(PREC,	"3")
+	field(EGU,	"us")
+	field(FLNK, "GBL-TI-$(DEVICE)-PDP$(PDP):getWidth")
+}
+
+record(ai, "GBL-TI-$(DEVICE)-PDP$(PDP):getWidth")
+{
+	field(DESC, "Gets the pdp width.")
+	field(DTYP, "asynFloat64")
+	field(INP,	"@asyn($(DEVICE) $(PDP)) EVR_PDP_Width")
+	field(PREC,	"3")
+	field(EGU,	"us")
+}

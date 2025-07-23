@@ -1,0 +1,25 @@
+record(longout, "$(PREFIX)-C$(COUNTER):setPrescaler")
+{
+	field(PINI, "YES")
+	field(VAL,  "$(PRESCALER)")
+	field(DTYP, "asynInt32")
+	field(OUT,  "@asyn(EVG $(COUNTER)) EVG_MXC_Prescaler")
+	field(FLNK, "$(PREFIX)-C$(COUNTER):getPrescaler")
+}
+
+record(longin, "$(PREFIX)-C$(COUNTER):getPrescaler")
+{
+	field(PINI, "YES")
+	# field(SCAN, "1 second")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn(EVG $(COUNTER)) EVG_MXC_Prescaler")
+	info(asyn:INITIAL_READBACK, "0")
+}
+
+record(stringout, "$(PREFIX)-C$(COUNTER):getName")
+{
+	field(DESC, "Gets the counter name.")
+	field(VAL, 	"$(NAME)")
+	field(PINI, "YES")
+}
+

@@ -1,0 +1,5 @@
+pattern	{	PREFIX			NAME			COUNTER	PRESCALER	}
+		{	GBL-TI-EVG0		Vacant			0		16			}
+		{	GBL-TI-EVG0		Vacant			1		16			}
+		{	GBL-TI-EVG0		Coincidence		7		1776		}
+

@@ -1,0 +1,27 @@
+record(ao, "GBL-TI-EVR0-P10:setBaseDelay")
+{
+    field(DESC, "Sets booster Ext. Kicker Base delay")
+    field(RVAL, "0")
+    field(PINI, "YES")
+    field(PREC, "3")
+    field(EGU, "us")
+}
+
+record(ao, "GBL-TI-EVR1-P2:setBaseDelay")
+{
+    field(DESC, "Sets SR Inj. Kicker Base delay")
+    field(RVAL, "0")
+    field(PINI, "YES")
+    field(PREC, "3")
+    field(EGU, "us")
+}
+
+record(ao, "GBL-TI-EVR1-P8:setBaseDelay")
+{
+    field(DESC, "Sets SR Inj. Kicker Base delay")
+    field(RVAL, "0")
+    field(PINI, "YES")
+    field(PREC, "3")
+    field(EGU, "us")
+}
+

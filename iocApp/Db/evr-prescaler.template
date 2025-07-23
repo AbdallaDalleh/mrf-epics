@@ -1,0 +1,27 @@
+#
+#
+#
+
+record(stringout, "GBL-TI-$(DEVICE)-PRE$(PRESCALER):getName")
+{
+	field(DESC, "Gets the name of the prescaler.")
+	field(VAL, 	"$(NAME)")
+	field(PINI, "YES")
+}
+
+record(longout, "GBL-TI-$(DEVICE)-PRE$(PRESCALER):setPrescaler")
+{
+	field(DESC, "Sets prescaler.")
+	field(DTYP, "asynInt32")
+	field(OUT, 	"@asyn($(DEVICE) $(PRESCALER)) EVR_Prescaler")
+	field(VAL,	"$(VALUE)")
+	field(PINI,	"YES")
+	field(FLNK, "GBL-TI-$(DEVICE)-PRE$(PRESCALER):getPrescaler")
+}
+
+record(longin, "GBL-TI-$(DEVICE)-PRE$(PRESCALER):getPrescaler")
+{
+	field(DESC, "Gets prescaler")
+	field(DTYP, "asynInt32")
+	field(INP,  "@asyn($(DEVICE) $(PRESCALER)) EVR_Prescaler")
+}
