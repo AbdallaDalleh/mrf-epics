@@ -1,6 +1,0 @@
-epicsEnvSet("IOC","ioc")
-epicsEnvSet("TOP","/home/dev.control/mrf-epics")
-epicsEnvSet("MRF","/home/dev.control/mrf-epics")
-epicsEnvSet("ASYN","/opt/epics/support/asyn")
-epicsEnvSet("AUTOSAVE","/opt/epics/support/autosave")
-epicsEnvSet("EPICS_BASE","/opt/epics/base")

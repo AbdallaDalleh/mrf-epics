@@ -22,9 +22,10 @@ ioc_DBD += drvAsynIPPort.dbd
 ioc_DBD += asyn.dbd
 ioc_DBD += mrf.dbd
 ioc_DBD += asSupport.dbd
+ioc_DBD += iocAdmin.dbd
 
 # Add all the support libraries needed by this IOC
-ioc_LIBS += asyn mrf autosave
+ioc_LIBS += asyn mrf autosave devIocStats
 
 # ioc_registerRecordDeviceDriver.cpp derives from ioc.dbd
 ioc_SRCS += ioc_registerRecordDeviceDriver.cpp

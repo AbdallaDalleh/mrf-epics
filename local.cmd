@@ -1,6 +1,6 @@
 #!../../bin/linux-x86_64/ioc
 
-epicsEnvSet("TOP", "/ioc")
+< iocBoot/ioc/envPaths
 
 dbLoadDatabase "dbd/ioc.dbd"
 ioc_registerRecordDeviceDriver pdbbase

@@ -14,3 +14,4 @@ autosave/*
 !autosave/evr.req
 !autosave/evg.req
 *.local
+envPaths

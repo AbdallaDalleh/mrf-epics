@@ -26,6 +26,7 @@
 MRF = $(TOP)
 ASYN = /opt/epics/support/asyn
 AUTOSAVE = /opt/epics/support/autosave
+IOCSTATS = /opt/epics/support/iocstats
 
 # EPICS_BASE should appear last so earlier modules can override stuff:
 EPICS_BASE = /opt/epics/base
