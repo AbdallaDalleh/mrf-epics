@@ -11,5 +11,6 @@ mrf-*
 st.cmd
 !iocBoot/ioc/st.cmd
 .*
-autosave/
-
+autosave/*
+!autosave/evr.req
+!autosave/evg.req
