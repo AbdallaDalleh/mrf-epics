@@ -8,9 +8,9 @@ O.Common/
 O.linux-x86/
 O.linux-x86_64/
 mrf-*
-st.cmd
-!iocBoot/ioc/st.cmd
+ip.cmd
 .*
 autosave/*
 !autosave/evr.req
 !autosave/evg.req
+*.local
