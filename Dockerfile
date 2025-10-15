@@ -22,15 +22,15 @@ COPY --from=modules /ioc/st.cmd    /ioc/
 COPY --from=modules /ioc/ip.cmd    /ioc/
 
 # EPICS Base core libraries.
-COPY --from=modules /opt/epics/base/lib/linux-x86_64/libdbRecStd.so.7.0.8 /opt/epics/base/lib/linux-x86_64/
-COPY --from=modules /opt/epics/base/lib/linux-x86_64/libdbCore.so.7.0.8   /opt/epics/base/lib/linux-x86_64/
-COPY --from=modules /opt/epics/base/lib/linux-x86_64/libca.so.7.0.8       /opt/epics/base/lib/linux-x86_64/
-COPY --from=modules /opt/epics/base/lib/linux-x86_64/libCom.so.7.0.8      /opt/epics/base/lib/linux-x86_64/
+COPY --from=modules /opt/epics/base/lib/linux-x86_64/libdbRecStd.so.7.0 /opt/epics/base/lib/linux-x86_64/
+COPY --from=modules /opt/epics/base/lib/linux-x86_64/libdbCore.so.7.0   /opt/epics/base/lib/linux-x86_64/
+COPY --from=modules /opt/epics/base/lib/linux-x86_64/libca.so.7.0       /opt/epics/base/lib/linux-x86_64/
+COPY --from=modules /opt/epics/base/lib/linux-x86_64/libCom.so.7.0      /opt/epics/base/lib/linux-x86_64/
 
 # EPICS support modules.
-COPY --from=modules /opt/epics/support/asyn/lib/linux-x86_64/libasyn.so.4.44           /usr/lib64/
-COPY --from=modules /opt/epics/support/iocstats/lib/linux-x86_64/libdevIocStats.so.3.1 /usr/lib64/
-COPY --from=modules /opt/epics/support/autosave/lib/linux-x86_64/libautosave.so.5.10   /usr/lib64/
+COPY --from=modules /opt/epics/support/asyn/lib/linux-x86_64/libasyn.so.4.45            /usr/lib64/
+COPY --from=modules /opt/epics/support/iocstats/lib/linux-x86_64/libdevIocStats.so.3.2  /usr/lib64/
+COPY --from=modules /opt/epics/support/autosave/lib/linux-x86_64/libautosave.so.5.11    /usr/lib64/
 
 # OS.
 COPY --from=modules /lib64/libstdc++.so.6          /lib64/
