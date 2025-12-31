@@ -1,0 +1,112 @@
+diff --git a/mrfApp/src/drvEVR230.cpp b/mrfApp/src/drvEVR230.cpp
+index 69e8961..fabdc1a 100644
+--- a/mrfApp/src/drvEVR230.cpp
++++ b/mrfApp/src/drvEVR230.cpp
+@@ -44,7 +44,7 @@ EVR230::EVR230(const char* port_name, const char* asyn_name, int frequency)
+     createParam(EVR_Prescaler,        asynParamInt32,         &index_evr_prescaler);
+ 
+     // enable event map, testing only ...
+-    if (std::string(port_name) == "EVR0") {
++    if (std::string(port_name) == "EVR2") {
+         evr230_write(device, 0x02,  1);
+         evr230_write(device, 0x04, 0x7FFF);
+     }
+diff --git a/mrfApp/src/evr230.cpp b/mrfApp/src/evr230.cpp
+index c519859..8602694 100644
+--- a/mrfApp/src/evr230.cpp
++++ b/mrfApp/src/evr230.cpp
+@@ -26,6 +26,16 @@ int evr230_init(asynUser* device, const char* asyn_name, u32 frequency)
+ 		return -1;
+ 	}
+ 
++    evr230_write(device, 0x4A, 0x0B);
++    // evr230_write(device, 0xC0, 0x0);
++    // evr230_write(device, 0xC2, 0x0000);
++    // evr230_write(device, 0xC4, 0x0);
++    // evr230_write(device, 0xC6, 0x0000);
++    // evr230_write(device, 0xC8, 0x0);
++    // evr230_write(device, 0xCA, 0x0000);
++
++
++
+ 	printf("\nDevice %s initialized successfully.\n\n", asyn_name);
+ 	return 0;
+ }
+@@ -484,9 +494,29 @@ int evr230_get_pdp_width(asynUser* device, u16 output, double* width)
+ int evr230_enable_cml(asynUser* device, u16 output, u16 enable)
+ {
+     u16 value;
++    int status = 0;
+ 
+-    value = CML_FREQUENCY_MODE + (enable ? CML_ENABLE : CML_DISABLE);
+-    return evr230_write(device, EVR230_CML_ENABLE(output), value);
++    u16 data;
++
++    if (output == 0)
++        value = CML_FREQUENCY_MODE + (enable ? CML_ENABLE : CML_DISABLE);
++    else {
++        value = CML_PULSE_MODE + (enable ? CML_ENABLE : CML_DISABLE);
++    }
++
++    status = evr230_read(device, 0xC4, &data);
++    printf("0xC4: 0x%X\n", data);
++    status = evr230_read(device, 0xC6, &data);
++    printf("0xC4: 0x%X\n", data);
++
++
++    status |= evr230_write(device, 0xC4, 0x8);
++    status |= evr230_write(device, 0xC6, 0x0);
++    // status |= evr230_write(device, 0xCC, 0xF);
++    // status |= evr230_write(device, 0xCE, 0xFFFF);
++
++    status |= evr230_write(device, EVR230_CML_ENABLE(output), value);
++    return status;
+ }
+ 
+ int evr230_is_cml_enabled(asynUser* device, u16 output, u16* enabled)
+diff --git a/mrfApp/src/evr230.h b/mrfApp/src/evr230.h
+index 72a1cb1..115274c 100644
+--- a/mrfApp/src/evr230.h
++++ b/mrfApp/src/evr230.h
+@@ -16,6 +16,7 @@ using std::string;
+ #define BASE_ADDRESS        0x7A000000
+ #define OTP_SELECT_OFFSET   16
+ #define CML_FREQUENCY_MODE  0x0010
++#define CML_PULSE_MODE      0x0000
+ #define CML_ENABLE			0x0001
+ #define CML_DISABLE         0x0002
+ 
+diff --git a/st.cmd b/st.cmd
+index 9533b96..df4a0c0 100644
+--- a/st.cmd
++++ b/st.cmd
+@@ -1,6 +1,6 @@
+ #!../../bin/linux-x86_64/ioc
+ 
+-epicsEnvSet("TOP", "/ioc")
++epicsEnvSet("TOP", "/home/control/work/mrf-epics")
+ 
+ dbLoadDatabase "dbd/ioc.dbd"
+ ioc_registerRecordDeviceDriver pdbbase
+@@ -18,17 +18,17 @@ dbLoadRecords("db/evr-pdp.db")
+ dbLoadRecords("db/evr-cml.db")
+ dbLoadRecords("db/evr-prescaler.db")
+ 
+-dbLoadRecords("db/filling.db")
++# dbLoadRecords("db/filling.db")
+ 
+ < ip.cmd
+ 
+ drvAsynIPPortConfigure("EVG230",   "$(EVG_IP):2000 UDP", 0, 0, 1)
+ drvAsynIPPortConfigure("EVR230_0", "$(EVR0_IP):2000 UDP", 0, 0, 1)
+-drvAsynIPPortConfigure("EVR230_1", "$(EVR1_IP):2000 UDP", 0, 0, 1)
++# drvAsynIPPortConfigure("EVR230_1", "$(EVR1_IP):2000 UDP", 0, 0, 1)
+ 
+ EVG230Configure("EVG", "EVG230", 125)
+-EVR230Configure("EVR0", "EVR230_0", 125)
+-EVR230Configure("EVR1", "EVR230_1", 125)
++EVR230Configure("EVR2", "EVR230_0", 125)
++# EVR230Configure("EVR1", "EVR230_1", 125)
+ 
+ save_restoreSet_Debug(0)
+ set_requestfile_path("$(TOP)/autosave/")

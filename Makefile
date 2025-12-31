@@ -4,7 +4,7 @@ NAME = timing-system
 
 RUN_FLAGS += --interactive
 RUN_FLAGS += --tty
-RUN_FLAGS += --detach
+# RUN_FLAGS += --detach
 RUN_FLAGS += --network host
 RUN_FLAGS += --volume /home/control/nfs/groups/control/autosave/$(NAME):/ioc/autosave
 RUN_FLAGS += --name $(NAME)
