@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Chart.Name }}-pv-claim
+spec:
+  storageClassName: nfs-storage
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Mi
+  volumeName: {{ .Chart.Name }}-nfs-pv-volume

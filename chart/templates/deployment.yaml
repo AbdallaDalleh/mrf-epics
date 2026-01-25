@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-deployment 
+  labels: 
+    app: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      name: {{ .Values.iocName }}   
+      labels:
+        app: {{ .Chart.Name }}
+      {{- if eq .Values.autoRestart true }}
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+      {{- end }}
+    spec:
+      hostNetwork: true
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                 - key: node-role.kubernetes.io/{{ .Values.nodeSelector.labelKey }}
+                   operator: In
+                   values:
+                     - {{ .Values.nodeSelector.labelValue }}
+      volumes:
+        - name: {{ .Chart.Name }}-pv-storage
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-pv-claim
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          stdin: true 
+          tty: true 
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /autosave
+              name: {{ .Chart.Name }}-pv-storage
+              subPath: {{ .Chart.Name }}

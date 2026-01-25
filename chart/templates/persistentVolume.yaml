@@ -1,0 +1,15 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ .Chart.Name }}-nfs-pv-volume
+  labels:
+    type: nfs
+spec:
+  storageClassName: nfs-storage
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 10.1.100.31
+    path: /home/machine-nfs01/groups/control/autosave

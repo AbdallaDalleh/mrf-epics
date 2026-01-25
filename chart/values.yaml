@@ -1,0 +1,14 @@
+iocName: timing-system
+
+nodeSelector:
+  labelKey: machine
+  labelValue: timing
+
+image:
+  name: timing-system
+  repository: registry.docker.com
+  tag: "latest"
+  pullPolicy: Always
+
+autoRestart: true
+
