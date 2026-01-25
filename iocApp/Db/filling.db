@@ -18,7 +18,16 @@ record(ao, "GBL-TI-EVR1-P2:setBaseDelay")
 
 record(ao, "GBL-TI-EVR1-P8:setBaseDelay")
 {
-    field(DESC, "Sets SR Inj. Kicker Base delay")
+    field(DESC, "SR-LIBERA Base delay")
+    field(RVAL, "0")
+    field(PINI, "YES")
+    field(PREC, "3")
+    field(EGU, "us")
+}
+
+record(ao, "GBL-TI-EVR1-PDP8:setBaseDelay")
+{
+    field(DESC, "SR SHAKER Base delay")
     field(RVAL, "0")
     field(PINI, "YES")
     field(PREC, "3")
