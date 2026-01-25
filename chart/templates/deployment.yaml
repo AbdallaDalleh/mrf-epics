@@ -41,6 +41,6 @@ spec:
           securityContext:
             privileged: true
           volumeMounts:
-            - mountPath: /autosave
+            - mountPath: /ioc/autosave
               name: {{ .Chart.Name }}-pv-storage
               subPath: {{ .Chart.Name }}
