@@ -1,5 +1,8 @@
 
 #include "EVG230Board.h"
+#include <chrono>
+#include <iomanip>
+
 
 EVG230Board::EVG230Board(string asyn_name, int frequency)
 {
@@ -21,18 +24,21 @@ int EVG230Board::enable()
 {
     int status;
 
+	m_function = "EVG230::enable";
     status = writeRegister(REGISTER_CONTROL, ~MSDIS & (FF | RSFIFO | DFIFO | RXVIO));
     return status;    
 }
 
 int EVG230Board::disable()
 {
+	m_function = "EVG230::disable";
     int status = writeRegister(REGISTER_CONTROL, MSDIS | FF | RSFIFO | DFIFO | RXVIO);
     return status;    
 }
 
 int EVG230Board::isEnabled(u16* value)
 {
+	m_function = "EVG230::isEnabled";
     u16 raw_data;
     int status = readRegister(REGISTER_CONTROL, &raw_data);
     if(status == 0)
@@ -42,16 +48,19 @@ int EVG230Board::isEnabled(u16* value)
 
 int EVG230Board::readFirmware(u16* data)
 {
+	m_function = "EVG230::readFirmware";
     return readRegister(REGISTER_FIRMWARE, data);
 }
 
 int EVG230Board::readClock(u16* data)
 {
+	m_function = "EVG230::readClock";
     return readRegister(REGISTER_USEC_DIVIDER, data);
 }
 
 int EVG230Board::readRFSource(u16* data)
 {
+	m_function = "EVG230::readRFSource";
     u16 raw_data;
     int status = readRegister(REGISTER_RF_CONTROL, &raw_data);
     *data = (raw_data & (TCSEL | ECSEL | BRSEL)) != 0;
@@ -60,6 +69,7 @@ int EVG230Board::readRFSource(u16* data)
 
 int EVG230Board::setRFSource(u16 source)
 {
+	m_function = "EVG230::setRFSource";
     u16 data;
     int status;
 
@@ -73,6 +83,7 @@ int EVG230Board::setRFSource(u16 source)
 
 int EVG230Board::readACSyncSource(u16* source)
 {
+	m_function = "EVG230::readACSync";
     u16 raw_data;
     int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
     *source = (raw_data & ACSYNC) != 0;
@@ -81,6 +92,7 @@ int EVG230Board::readACSyncSource(u16* source)
 
 int EVG230Board::setACSyncSource(u16 source)
 {
+	m_function = "EVG230::setACSync";
     u16 raw_data;
     u16 data;
     int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
@@ -94,6 +106,7 @@ int EVG230Board::setACSyncSource(u16 source)
 
 int EVG230Board::readRFPrescaler(u16* data)
 {
+	m_function = "EVG230::readRFPrescaler";
     int status = readRegister(REGISTER_RF_CONTROL, data);
     if(status == 0)
         *data = (*data & RFSELX) + 1;
@@ -102,6 +115,7 @@ int EVG230Board::readRFPrescaler(u16* data)
 
 int EVG230Board::setRFPrescaler(u16 data)
 {
+	m_function = "EVG230::setRFPrescaler";
     u16 raw_data;
     int status = readRegister(REGISTER_RF_CONTROL, &raw_data);
     if(status == 0)
@@ -111,6 +125,7 @@ int EVG230Board::setRFPrescaler(u16 data)
 
 int EVG230Board::readACPrescaler(u16* data)
 {
+	m_function = "EVG230::readACPrescaler";
     u16 raw_data;
     int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
     if(status == 0) {
@@ -121,6 +136,7 @@ int EVG230Board::readACPrescaler(u16* data)
 
 int EVG230Board::setACPrescaler(u16 data)
 {
+	m_function = "EVG230::setACPrescaler";
     u16 raw_data;
     int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
     if(status == 0) {
@@ -132,6 +148,7 @@ int EVG230Board::setACPrescaler(u16 data)
 
 int EVG230Board::readMXCPrescaler(int counter, u32* data)
 {
+	m_function = "EVG230::readMXC";
     u16 raw_data;
     u32 value;
     int status = writeRegister(REGISTER_MXC_CONTROL, counter | MXHSEL);
@@ -152,6 +169,7 @@ int EVG230Board::readMXCPrescaler(int counter, u32* data)
 
 int EVG230Board::setMXCPrescaler(int counter, u32 data)
 {
+	m_function = "EVG230::setMXC";
     int status = writeRegister(REGISTER_MXC_CONTROL, counter | MXHSEL);
     status    |= writeRegister(REGISTER_MXC_PRESCALER, (u16)(data >> 16));
     if(status == 0) {
@@ -164,6 +182,7 @@ int EVG230Board::setMXCPrescaler(int counter, u32 data)
 
 int EVG230Board::enableSequencer(int seq)
 {
+	m_function = "EVG230::enableSEQ";
     u16 raw_data;
     int status = readRegister(REGISTER_EVENT_ENABLE, &raw_data);
     if(status == 0)
@@ -173,6 +192,7 @@ int EVG230Board::enableSequencer(int seq)
 
 int EVG230Board::disableSequencer(int seq)
 {
+	m_function = "EVG230::disableSEQ";
     u16 raw_data;
     int status = readRegister(REGISTER_EVENT_ENABLE, &raw_data);
     if(status == 0)
@@ -182,6 +202,7 @@ int EVG230Board::disableSequencer(int seq)
 
 int EVG230Board::isSequencerEnabled(int seq, u16* data)
 {
+	m_function = "EVG230::isSEQEnabled";
     u16 raw_data;
     int status = readRegister(REGISTER_EVENT_ENABLE, &raw_data);
     if(status == 0)
@@ -191,6 +212,7 @@ int EVG230Board::isSequencerEnabled(int seq, u16* data)
 
 int EVG230Board::readSequencerTriggerSource(int seq, u16* data)
 {
+	m_function = "EVG230::readSEQTriggerSource";
     u16 raw_data;
     int status = readRegister(REGISTER_AC_ENABLE, &raw_data);
     if(status == 0)
@@ -200,6 +222,7 @@ int EVG230Board::readSequencerTriggerSource(int seq, u16* data)
 
 int EVG230Board::setSequencerTriggerSource(int seq, u16 data)
 {
+	m_function = "EVG230::setSEQTriggerSource";
     u16 raw_data;
     u16 raw_data2;
     int status;
@@ -217,16 +240,19 @@ int EVG230Board::setSequencerTriggerSource(int seq, u16 data)
 
 int EVG230Board::readSequencerPrescaler(int seq, u16* data)
 {
+	m_function = "EVG230::readSEQPre";
     return readRegister(seq ? REGISTER_SEQ_CLOCK_SEL2 : REGISTER_SEQ_CLOCK_SEL1, data);
 }
 
 int EVG230Board::setSequencerPrescaler(int seq, u16 data)
 {
+	m_function = "EVG230::setSEQPre";
     return writeRegister(seq ? REGISTER_SEQ_CLOCK_SEL2 : REGISTER_SEQ_CLOCK_SEL1, data);
 }
 
 int EVG230Board::readSequencerEvent(int seq, int address, u16* data)
 {
+	m_function = "EVG230Board::readSequencerEvent";
     u16 raw_data;
     int status = writeRegister(seq ? REGISTER_SEQ_ADDRESS1 : REGISTER_SEQ_ADDRESS0, address);
     if(status == 0) {
@@ -239,6 +265,7 @@ int EVG230Board::readSequencerEvent(int seq, int address, u16* data)
 
 int EVG230Board::setSequencerEvent(int seq, int address, u16 data)
 {
+	m_function = "EVG230Board::setSequencerEvent";
     int status = writeRegister(seq ? REGISTER_SEQ_ADDRESS1 : REGISTER_SEQ_ADDRESS0, address);
     if(status == 0) {
         status = writeRegister(seq ? REGISTER_SEQ_CODE1 : REGISTER_SEQ_CODE0, data & 0xFF);
@@ -249,6 +276,7 @@ int EVG230Board::setSequencerEvent(int seq, int address, u16 data)
 
 int EVG230Board::readSequencerEventTime(int seq, int address, u32* data)
 {
+	m_function = "EVG230Board::readSequencerEventTime";
     u16 raw_data;
     int status = writeRegister(seq ? REGISTER_SEQ_ADDRESS1 : REGISTER_SEQ_ADDRESS0, address);
     if(status == 0) {
@@ -264,6 +292,7 @@ int EVG230Board::readSequencerEventTime(int seq, int address, u32* data)
 
 int EVG230Board::setSequencerEventTime(int seq, int address, u32 data)
 {
+	m_function = "EVG230Board::setSequencerEventTime";
     u16 addr = seq ? REGISTER_SEQ_ADDRESS1 : REGISTER_SEQ_ADDRESS0;
     u16 time = seq ? REGISTER_SEQ_TIME1    : REGISTER_SEQ_TIME0;
     int status = writeRegister(addr, address);
@@ -277,6 +306,7 @@ int EVG230Board::setSequencerEventTime(int seq, int address, u32 data)
 
 int EVG230Board::triggerSequencer(int seq)
 {
+	m_function = "EVG230Board::triggerSequencer";
 	u16 control;
 	int status;
 
@@ -307,17 +337,21 @@ int EVG230Board::writeRegister(int reg, u16 data)
     memcpy(tx_buffer, (void*) &message, sizeof(tx_buffer));
     status = pasynOctetSyncIO->writeRead(this->device, tx_buffer, PACKET_SIZE, rx_buffer, PACKET_SIZE, IO_TIMEOUT, &tx_bytes, &rx_bytes, &reason);
     if(status != asynSuccess || tx_bytes != PACKET_SIZE || rx_bytes != PACKET_SIZE) {
-        // TODO: Error reporting.
-        this->errorMessage = "Could not write to register";
-        this->error = status;
+        auto now = std::chrono::system_clock::now();
+        auto now_t = std::chrono::system_clock::to_time_t(now);
+		std::cout 
+            << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S: ")
+            << m_function 
+            << ": could not write register" << std::endl;
         return status;
     }
 
     memcpy(&message, rx_buffer, sizeof(message_t));
     if(ntohs(message.status) != 0 /*|| ntohs(message.data) != data*/) {
         // TODO: Error reporting.
-        this->errorMessage = "Device status error or data mismatch";
-        this->error = status;
+        // this->errorMessage = "Device status error or data mismatch";
+        // this->error = status;
+		std::cout << m_function << ": data read error/mismatch" << std::endl;
         return status;
     }
 
@@ -344,16 +378,23 @@ int EVG230Board::readRegister(int reg, u16* data)
     status = pasynOctetSyncIO->writeRead(this->device, tx_buffer, PACKET_SIZE, rx_buffer, PACKET_SIZE, IO_TIMEOUT, &tx_bytes, &rx_bytes, &reason);
     if(status != asynSuccess || tx_bytes != PACKET_SIZE || rx_bytes != PACKET_SIZE) {
         // TODO: Error reporting.
-        this->errorMessage = "Could not read register";
-        this->error = status;
+        // this->errorMessage = "Could not read register";
+        // this->error = status;
+        auto now = std::chrono::system_clock::now();
+        auto now_t = std::chrono::system_clock::to_time_t(now);
+		std::cout 
+            << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S: ")
+            << m_function 
+            << ": could not read register" << std::endl;
         return status;
     }
 
     memcpy(&message, rx_buffer, sizeof(message_t));
     if(ntohs(message.status) != 0) {
         // TODO: Error reporting.
-        this->errorMessage = "Device status error";
-        this->error = status;
+        // this->errorMessage = "Device status error";
+        // this->error = status;
+		std::cout << m_function << ": data read error/mismatch" << std::endl;
         return status;
     }
 

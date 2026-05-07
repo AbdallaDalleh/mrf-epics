@@ -169,7 +169,7 @@ asynStatus EVR230::readUInt32Digital(asynUser* asyn_user, epicsUInt32* value, ep
 	}
 
 	if(status != asynSuccess) {
-		printf("readUInt32Digital: I/O Error.\n");
+		// printf("readUInt32Digital: I/O Error.\n");
 		return asynError;
 	}
 

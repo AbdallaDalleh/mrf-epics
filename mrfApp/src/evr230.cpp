@@ -1,7 +1,11 @@
 
 #include "evr230.h"
 
+#include <chrono>
+#include <iomanip>
+
 static u32 device_frequency;
+static std::string m_function;
 
 int evr230_init(asynUser* device, const char* asyn_name, u32 frequency)
 {
@@ -49,12 +53,19 @@ int evr230_read(asynUser* device, int address, u16* data)
     status = pasynOctetSyncIO->writeRead(device, tx_buffer, PACKET_SIZE, rx_buffer, PACKET_SIZE, IO_TIMEOUT, &tx_bytes, &rx_bytes, &reason);
     if(status != asynSuccess || tx_bytes != PACKET_SIZE || rx_bytes != PACKET_SIZE) {
         // TODO: Error reporting.
+        auto now = std::chrono::system_clock::now();
+        auto now_t = std::chrono::system_clock::to_time_t(now);
+		std::cout 
+            << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S: ")
+            << m_function 
+            << ": could not read register" << std::endl;
         return status;
     }
 
     memcpy(&message, rx_buffer, sizeof(message_t));
     if(ntohs(message.status) != 0) {
         // TODO: Error reporting.
+		std::cout << m_function << ": data read error/mismatch" << std::endl;
         return status;
     }
 
@@ -81,11 +92,13 @@ int evr230_write(asynUser* device, int reg, u16 data)
     memcpy(tx_buffer, (void*) &message, sizeof(tx_buffer));
     status = pasynOctetSyncIO->writeRead(device, tx_buffer, PACKET_SIZE, rx_buffer, PACKET_SIZE, IO_TIMEOUT, &tx_bytes, &rx_bytes, &reason);
     if(status != asynSuccess || tx_bytes != PACKET_SIZE || rx_bytes != PACKET_SIZE) {
+		std::cout << m_function << ": could not write to register" << std::endl;
         return status;
     }
 
     memcpy(&message, rx_buffer, sizeof(message_t));
     if(ntohs(message.status) != 0 /*|| ntohs(message.data) != data*/) {
+		std::cout << m_function << ": data write error/mismatch" << std::endl;
         return asynError;
     }
     return asynSuccess;
@@ -94,6 +107,7 @@ int evr230_write(asynUser* device, int reg, u16 data)
 
 int evr230_enable(asynUser* device, u16 enable)
 {
+	m_function = "evr230_enable";
 	u16 state = enable ? (EVREN | MAPEN) : 0;
 	int status = evr230_write(device, EVR230_CONTROL, state);
 	return status;
@@ -101,6 +115,7 @@ int evr230_enable(asynUser* device, u16 enable)
 
 int evr230_is_enabled(asynUser* device, u16* enabled)
 {
+	m_function = "evr230_is_enabled";
 	u16 data;
 	int status = evr230_read(device, EVR230_CONTROL, &data);
 	if(status == asynSuccess)
@@ -111,12 +126,14 @@ int evr230_is_enabled(asynUser* device, u16* enabled)
 
 int evr230_set_clock(asynUser* device, u16 clock)
 {
+	m_function = "evr230_set_clock";
 	int status = evr230_write(device, EVR230_USEC_DIVIDER, clock);
 	return status;
 }
 
 int evr230_get_clock(asynUser* device, u16* clock)
 {
+	m_function = "evr230_get_clock";
 	u16 data;
 	int status;
 
@@ -129,6 +146,7 @@ int evr230_get_clock(asynUser* device, u16* clock)
 
 int evr230_flush(asynUser* device)
 {
+	m_function = "evr230_flush";
 	int status;
 	u16 data;
 
@@ -142,6 +160,7 @@ int evr230_flush(asynUser* device)
 
 int evr230_enable_otp(asynUser* device, u16 output, u16 enable)
 {
+	m_function = "evr230_enable_otp";
 	u16 data;
 	int status;
 	
@@ -159,6 +178,7 @@ int evr230_enable_otp(asynUser* device, u16 output, u16 enable)
 
 int evr230_is_otp_enabled(asynUser* device, u16 output, u16* enabled)
 {
+	m_function = "evr230_is_otp_enabled";
 	u16 data;
 	int status;
 
@@ -171,6 +191,7 @@ int evr230_is_otp_enabled(asynUser* device, u16 output, u16* enabled)
 
 int evr230_set_otp_delay(asynUser* device, u16 output, double delay)
 {
+	m_function = "evr230_set_otp_delay";
 	int status;
 	u32 cycles;
 
@@ -189,6 +210,7 @@ int evr230_set_otp_delay(asynUser* device, u16 output, double delay)
 
 int evr230_get_otp_delay(asynUser* device, u16 output, double* delay)
 {
+	m_function = "evr230_get_otp_delay";
 	int status;
 	u16 data;
 	u32 cycles;
@@ -213,6 +235,7 @@ int evr230_get_otp_delay(asynUser* device, u16 output, double* delay)
 
 int evr230_set_otp_width(asynUser* device, u16 output, double width)
 {
+	m_function = "evr230_set_otp_width";
 	int status;
 	u16 cycles;
 
@@ -227,6 +250,7 @@ int evr230_set_otp_width(asynUser* device, u16 output, double width)
 
 int evr230_get_otp_width(asynUser* device, u16 output, double* width)
 {
+	m_function = "evr230_get_otp_width";
 	int status;
 	u16 data;
 
@@ -244,6 +268,7 @@ int evr230_get_otp_width(asynUser* device, u16 output, double* width)
 
 int evr230_reset_rx(asynUser* device)
 {
+	m_function = "evr230_reset_rx";
 	int status;
 	u16 data;
 
@@ -257,19 +282,19 @@ int evr230_reset_rx(asynUser* device)
 
 int evr230_is_rx_violation(asynUser* device, u16* value)
 {
+	m_function = "evr230_is_rx_violation";
 	int status;
 	u16 data;
 
 	status = evr230_read(device, EVR230_CONTROL, &data);
-	if(status != asynSuccess)
-		return -1;
-
-	*value = (data & RXVIO) == RXVIO;
+	if(status == asynSuccess)
+        *value = (data & RXVIO) == RXVIO;
 	return status;
 }
 
 int evr230_get_firmware_version(asynUser* device, u16* value)
 {
+	m_function = "evr230_get_firmware_version";
 	int status;
 	u16 data;
 
@@ -283,11 +308,13 @@ int evr230_get_firmware_version(asynUser* device, u16* value)
 
 int evr230_set_ttl_source(asynUser* device, u16 ttl, u16 source)
 {
+	m_function = "evr230_set_ttl_source";
     return evr230_write(device, EVR230_FP_TTL(ttl), source);
 }
 
 int evr230_get_ttl_source(asynUser* device, u16 ttl, u16* source)
 {
+	m_function = "evr230_get_ttl_source";
     int status;
     u16 data;
 
@@ -301,11 +328,13 @@ int evr230_get_ttl_source(asynUser* device, u16 ttl, u16* source)
 
 int evr230_set_universal_source(asynUser* device, u16 univ, u16 source)
 {
+	m_function = "evr230_set_universal_source";
     return evr230_write(device, EVR230_FP_UNIV(univ), source);
 }
 
 int evr230_get_universal_source(asynUser* device, u16 univ, u16* source)
 {
+	m_function = "evr230_get_universal_source";
     int status;
     u16 data;
 
@@ -319,6 +348,7 @@ int evr230_get_universal_source(asynUser* device, u16 univ, u16* source)
 
 int evr230_enable_pdp(asynUser* device, u16 output, u16 enable)
 {
+	m_function = "evr230_enable_pdp";
     u16 data;
     int status;
 
@@ -335,6 +365,7 @@ int evr230_enable_pdp(asynUser* device, u16 output, u16 enable)
 
 int evr230_is_pdp_enabled(asynUser* device, u16 output, u16* enabled)
 {
+	m_function = "evr230_is_pdp_enabled";
 	u16 data;
 	int status;
 
@@ -347,6 +378,7 @@ int evr230_is_pdp_enabled(asynUser* device, u16 output, u16* enabled)
 
 int evr230_set_pdp_delay(asynUser* device, u16 output, double delay)
 {
+	m_function = "evr230_set_pdp_delay";
 	int status;
 	u32 cycles;
     u16 prescaler;
@@ -370,6 +402,7 @@ int evr230_set_pdp_delay(asynUser* device, u16 output, double delay)
 
 int evr230_get_pdp_delay(asynUser* device, u16 output, double* delay)
 {
+	m_function = "evr230_get_pdp_delay";
 	int status;
 	u16 data;
     u16 prescaler;
@@ -399,6 +432,7 @@ int evr230_get_pdp_delay(asynUser* device, u16 output, double* delay)
 
 int evr230_set_pdp_prescaler(asynUser* device, u16 output, u16 prescaler)
 {
+	m_function = "evr230_set_pdp_prescaler";
     int status;
 
     status = evr230_write(device, EVR230_PULSE_SELECT, output);
@@ -414,6 +448,7 @@ int evr230_set_pdp_prescaler(asynUser* device, u16 output, u16 prescaler)
 
 int evr230_get_pdp_prescaler(asynUser* device, u16 output, u16* prescaler)
 {
+	m_function = "evr230_get_pdp_prescaler";
     int status;
     u16 data;
 
@@ -431,6 +466,7 @@ int evr230_get_pdp_prescaler(asynUser* device, u16 output, u16* prescaler)
 
 int evr230_set_pdp_width(asynUser* device, u16 output, double width)
 {
+	m_function = "evr230_set_pdp_width";
     int status;
     u32 cycles;
     u16 prescaler;
@@ -454,6 +490,7 @@ int evr230_set_pdp_width(asynUser* device, u16 output, double width)
 
 int evr230_get_pdp_width(asynUser* device, u16 output, double* width)
 {
+	m_function = "evr230_get_pdp_width";
     int status;
     u16 data;
     u16 prescaler;
@@ -483,6 +520,7 @@ int evr230_get_pdp_width(asynUser* device, u16 output, double* width)
 
 int evr230_enable_cml(asynUser* device, u16 output, u16 enable)
 {
+	m_function = "evr230_enable_cml";
     u16 value;
 
     value = CML_FREQUENCY_MODE + (enable ? CML_ENABLE : CML_DISABLE);
@@ -491,6 +529,7 @@ int evr230_enable_cml(asynUser* device, u16 output, u16 enable)
 
 int evr230_is_cml_enabled(asynUser* device, u16 output, u16* enabled)
 {
+	m_function = "evr230_is_cml_enabled";
     int status;
     u16 data;
 
@@ -503,6 +542,7 @@ int evr230_is_cml_enabled(asynUser* device, u16 output, u16* enabled)
 
 int evr230_set_cml_prescaler(asynUser* device, u16 output, u16 prescaler)
 {
+	m_function = "evr230_set_cml_prescaler";
     int status;
 
     status = evr230_write(device, EVR230_CML_HP(output), prescaler / 2);
@@ -514,6 +554,7 @@ int evr230_set_cml_prescaler(asynUser* device, u16 output, u16 prescaler)
 
 int evr230_get_cml_prescaler(asynUser* device, u16 output, u16* prescaler)
 {
+	m_function = "evr230_get_cml_prescaler";
     int status;
     u16 data;
 
@@ -532,11 +573,13 @@ int evr230_get_cml_prescaler(asynUser* device, u16 output, u16* prescaler)
 
 int evr230_set_prescaler(asynUser* device, u16 output, u16 prescaler)
 {
+	m_function = "evr230_set_prescaler";
     return evr230_write(device, EVR230_PRESCALER(output), prescaler);
 }
 
 int evr230_get_prescaler(asynUser* device, u16 output, u16* prescaler)
 {
+	m_function = "evr230_get_prescaler";
     int status;
     u16 data;
 

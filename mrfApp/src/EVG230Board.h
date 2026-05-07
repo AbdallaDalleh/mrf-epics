@@ -53,6 +53,7 @@ public:
 
     int error;
     string errorMessage;
+	string m_function;
 
 private:
     asynUser* device;
