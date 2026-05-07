@@ -7,6 +7,21 @@
 static u32 device_frequency;
 static std::string m_function;
 
+std::string str_status(asynStatus status)
+{
+    switch (status)
+    {
+        case asynSuccess: return "asynSuccess"; break;
+        case asynTimeout: return "asynTimeout"; break;
+        case asynOverflow: return "asynOverflow"; break;
+        case asynError:    return "asynError"; break;
+        case asynDisconnected: return "asynDisconnected"; break;
+        case asynDisabled: return "asynDisabled"; break;
+        default: return "asyn??????"; break;
+    }
+}
+
+
 int evr230_init(asynUser* device, const char* asyn_name, u32 frequency)
 {
 	int status;
@@ -59,7 +74,7 @@ int evr230_read(asynUser* device, int address, u16* data)
             << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S: ")
             << m_function
             << ": could not read register: " 
-            << device->errorMessage 
+            << device->errorMessage << " | " << str_status((asynStatus) status)
             << std::endl;
         return status;
     }
@@ -99,7 +114,7 @@ int evr230_write(asynUser* device, int reg, u16 data)
         std::cout << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S: ")
                   << m_function
                   << ": could not write register: " 
-                  << device->errorMessage 
+                  << device->errorMessage << " | " << str_status((asynStatus) status)
                   << std::endl;
         return status;
     }

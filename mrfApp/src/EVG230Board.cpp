@@ -3,6 +3,19 @@
 #include <chrono>
 #include <iomanip>
 
+std::string strStatus(asynStatus status)
+{
+    switch (status)
+    {
+        case asynSuccess: return "asynSuccess"; break;
+        case asynTimeout: return "asynTimeout"; break;
+        case asynOverflow: return "asynOverflow"; break;
+        case asynError:    return "asynError"; break;
+        case asynDisconnected: return "asynDisconnected"; break;
+        case asynDisabled: return "asynDisabled"; break;
+        default: return "asyn??????"; break;
+    }
+}
 
 EVG230Board::EVG230Board(string asyn_name, int frequency)
 {
@@ -343,7 +356,7 @@ int EVG230Board::writeRegister(int reg, u16 data)
             << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S: ")
             << m_function 
             << ": could not write register: " 
-            << this->device->errorMessage 
+            << this->device->errorMessage << " | " << strStatus((asynStatus) status)
             << std::endl;
         return status;
     }
@@ -380,11 +393,11 @@ int EVG230Board::readRegister(int reg, u16* data)
         // TODO: Error reporting.
         auto now = std::chrono::system_clock::now();
         auto now_t = std::chrono::system_clock::to_time_t(now);
-		std::cout 
+		std::cout
             << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S: ")
-            << m_function 
-            << ": could not read register: " 
-            << this->device->errorMessage 
+            << m_function
+            << ": could not read register: "
+            << this->device->errorMessage << " | " << strStatus((asynStatus) status)
             << std::endl;
         return status;
     }
