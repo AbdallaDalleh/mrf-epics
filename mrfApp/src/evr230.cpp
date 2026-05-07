@@ -55,10 +55,12 @@ int evr230_read(asynUser* device, int address, u16* data)
         // TODO: Error reporting.
         auto now = std::chrono::system_clock::now();
         auto now_t = std::chrono::system_clock::to_time_t(now);
-		std::cout 
+        std::cout 
             << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S: ")
-            << m_function 
-            << ": could not read register" << std::endl;
+            << m_function
+            << ": could not read register: " 
+            << device->errorMessage 
+            << std::endl;
         return status;
     }
 
@@ -92,7 +94,13 @@ int evr230_write(asynUser* device, int reg, u16 data)
     memcpy(tx_buffer, (void*) &message, sizeof(tx_buffer));
     status = pasynOctetSyncIO->writeRead(device, tx_buffer, PACKET_SIZE, rx_buffer, PACKET_SIZE, IO_TIMEOUT, &tx_bytes, &rx_bytes, &reason);
     if(status != asynSuccess || tx_bytes != PACKET_SIZE || rx_bytes != PACKET_SIZE) {
-		std::cout << m_function << ": could not write to register" << std::endl;
+        auto now = std::chrono::system_clock::now();
+        auto now_t = std::chrono::system_clock::to_time_t(now);
+        std::cout << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S: ")
+                  << m_function
+                  << ": could not write register: " 
+                  << device->errorMessage 
+                  << std::endl;
         return status;
     }
 

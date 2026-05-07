@@ -342,16 +342,16 @@ int EVG230Board::writeRegister(int reg, u16 data)
 		std::cout 
             << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S: ")
             << m_function 
-            << ": could not write register" << std::endl;
+            << ": could not write register: " 
+            << this->device->errorMessage 
+            << std::endl;
         return status;
     }
 
     memcpy(&message, rx_buffer, sizeof(message_t));
     if(ntohs(message.status) != 0 /*|| ntohs(message.data) != data*/) {
         // TODO: Error reporting.
-        // this->errorMessage = "Device status error or data mismatch";
-        // this->error = status;
-		std::cout << m_function << ": data read error/mismatch" << std::endl;
+		std::cout << m_function << ": data write error/mismatch" << std::endl;
         return status;
     }
 
@@ -378,22 +378,20 @@ int EVG230Board::readRegister(int reg, u16* data)
     status = pasynOctetSyncIO->writeRead(this->device, tx_buffer, PACKET_SIZE, rx_buffer, PACKET_SIZE, IO_TIMEOUT, &tx_bytes, &rx_bytes, &reason);
     if(status != asynSuccess || tx_bytes != PACKET_SIZE || rx_bytes != PACKET_SIZE) {
         // TODO: Error reporting.
-        // this->errorMessage = "Could not read register";
-        // this->error = status;
         auto now = std::chrono::system_clock::now();
         auto now_t = std::chrono::system_clock::to_time_t(now);
 		std::cout 
             << std::put_time(std::localtime(&now_t), "%Y-%m-%d %H:%M:%S: ")
             << m_function 
-            << ": could not read register" << std::endl;
+            << ": could not read register: " 
+            << this->device->errorMessage 
+            << std::endl;
         return status;
     }
 
     memcpy(&message, rx_buffer, sizeof(message_t));
     if(ntohs(message.status) != 0) {
         // TODO: Error reporting.
-        // this->errorMessage = "Device status error";
-        // this->error = status;
 		std::cout << m_function << ": data read error/mismatch" << std::endl;
         return status;
     }
