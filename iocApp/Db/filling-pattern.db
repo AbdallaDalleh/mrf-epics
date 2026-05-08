@@ -1,0 +1,27 @@
+
+record(aSub, "Filling:Pattern")
+{
+	field(PINI, "YES")
+	field(SCAN, "1 second")
+	field(SNAM, "filling_pattern")
+	field(INPU, "SR-DI:enableFilling.RVAL")   field(FTU, "SHORT")
+	field(INPT, "SR-DI:setFillingIterations") field(FTT, "SHORT")
+	field(INPS, "SR-DI:setFillingDelay")
+
+	# field(INPA, "GBL-TI-EVR0-P10:setDelay")
+	# field(INPB, "GBL-TI-EVR0-P10:setBaseDelay")
+	# field(INPC, "GBL-TI-EVR1-P2:setDelay")
+	# field(INPD, "GBL-TI-EVR1-P2:setBaseDelay")
+	
+	# Delays
+	field(INPA, "GBL-TI-EVR1-P8:setDelay")
+	field(OUTA, "GBL-TI-EVR1-P8:setDelay")
+	field(INPB, "GBL-TI-EVR1-P2:setDelay")
+	field(OUTB, "GBL-TI-EVR1-P2:setDelay")
+
+
+	# Base Delays
+	field(INPK, "GBL-TI-EVR1-P8:setBaseDelay")
+	field(INPL, "GBL-TI-EVR1-P2:setBaseDelay")
+}
+

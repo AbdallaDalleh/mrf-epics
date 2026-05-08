@@ -42,5 +42,5 @@ iocInit
 create_monitor_set("timing.req", 5, "")
 
 echo --------------------------------
-echo "Timing ioc loaded successfully."
+echo "Timing ioc loaded successfully.  "
 echo --------------------------------
